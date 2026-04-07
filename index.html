@@ -428,6 +428,14 @@
 
   <!-- 基本情報 -->
   <div class="card">
+    <label>メールアドレス <span class="required">*必須</span></label>
+    <p class="note" style="margin-top:0; margin-bottom:8px; line-height:1.7;">
+      ☑️ メールマガジンへのご登録をお願いいたします。（不要な場合はかんたんに解除できます）<br>
+      声に役立つ内容や講座クーポンなどの情報を優先的にお届けします。<br>
+      ※以下でご入力いただくメールアドレスへ週一配信
+    </p>
+    <input type="text" id="inputEmail" placeholder="例：example@gmail.com" inputmode="email">
+
     <label>お名前（声カルテに記載されます） <span class="required">*必須</span></label>
     <p class="note" style="margin-top:0; margin-bottom:8px;">ハンドルネームでOK</p>
     <input type="text" id="inputName" placeholder="例：山田太郎">
@@ -617,7 +625,7 @@
   // ============================================================
   // GAS WebアプリのURL（デプロイ後に書き換えること）
   // ============================================================
-  var GAS_URL = 'https://script.google.com/macros/s/AKfycbz8F-LQ9TQlU8eYi33eVH8dgLTeNlWoWrFXoua_CE-1ehe0PlYOEc0YJXt5WD8btzob/exec';
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbxnuZO2BSlPhvJt1WKZ6nIQD9EXEjha3isNDoPnxuhdhoh_m5mBPZEPeGBHE90jAx0/exec';
   var API_TOKEN = 'voicekarte2026secret';
   var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -803,6 +811,7 @@
   // フォーム送信（fetch で GAS の doPost にPOST）
   // ============================================================
   function submitForm() {
+    var email = document.getElementById('inputEmail').value.trim();
     var name = document.getElementById('inputName').value.trim();
     var gender = document.getElementById('inputGender').value;
     var consent = document.getElementById('inputConsent').checked;
@@ -811,6 +820,8 @@
     var scene = document.getElementById('inputScene').value.trim();
 
     // バリデーション
+    if (!email) { showError('メールアドレスを入力してください。'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
     if (!name) { showError('お名前を入力してください。'); return; }
     if (!gender) { showError('性別を選択してください。'); return; }
     if (!source) { showError('「どこで声カルテを知りましたか？」を1つ以上選択してください。'); return; }
@@ -832,6 +843,7 @@
         token: API_TOKEN,
         audioData: base64,
         mimeType: audioMimeType.split(';')[0],
+        email: email,
         name: name,
         gender: gender,
         age: document.getElementById('inputAge').value,
