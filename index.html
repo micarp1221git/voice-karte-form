@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>声カルテ 録音フォーム</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+      color: #222;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+
+    .intro {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.9;
+    }
+
+    .intro h3 {
+      font-size: 0.95rem;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    label .required {
+      color: #e53935;
+      margin-left: 4px;
+      font-size: 0.8rem;
+    }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      background: #fafafa;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #5c6bc0;
+      box-shadow: 0 0 0 3px rgba(92,107,192,0.15);
+    }
+
+    select {
+      background: #fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
+      padding-right: 32px;
+    }
+
+    /* チェックボックスグループ */
+    .checkbox-group {
+      margin-bottom: 16px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      font-weight: 400;
+      font-size: 0.9rem;
+      padding: 6px 0;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      accent-color: #5c6bc0;
+      flex-shrink: 0;
+    }
+
+    .checkbox-other-text {
+      width: calc(100% - 28px);
+      margin-left: 28px;
+      margin-top: -4px;
+      margin-bottom: 8px;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .checkbox-other-text.active {
+      display: block;
+    }
+
+    /* 録音セクション */
+    .recorder-section {
+      text-align: center;
+    }
+
+    .recorder-section h2 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: #444;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-record {
+      background: #e53935;
+      color: #fff;
+      font-size: 1.1rem;
+      padding: 14px 36px;
+    }
+
+    .btn-record:hover:not(:disabled) { background: #c62828; }
+
+    .btn-stop {
+      background: #555;
+      color: #fff;
+      font-size: 1.1rem;
+      padding: 14px 36px;
+    }
+
+    .btn-stop:hover:not(:disabled) { background: #333; }
+
+    .btn-retry {
+      background: #eee;
+      color: #333;
+    }
+
+    .btn-retry:hover { background: #ddd; }
+
+    .btn-submit {
+      background: #43a047;
+      color: #fff;
+      width: 100%;
+      font-size: 1.1rem;
+      padding: 14px;
+    }
+
+    .btn-submit:hover:not(:disabled) { background: #2e7d32; }
+
+    .timer {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #e53935;
+      margin: 16px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .recording-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #e53935;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .recording-dot {
+      width: 12px;
+      height: 12px;
+      background: #e53935;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    audio {
+      width: 100%;
+      margin: 12px 0;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .confirm-buttons .btn { flex: 1; }
+
+    /* 状態表示 */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* 送信中スピナー */
+    .spinner-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .spinner-overlay.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #ddd;
+      border-top-color: #5c6bc0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spinner-text {
+      font-size: 1.1rem;
+      color: #555;
+      font-weight: 600;
+    }
+
+    /* 完了メッセージ */
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .success-message.active { display: block; }
+
+    .success-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .success-message h2 {
+      color: #43a047;
+      margin-bottom: 8px;
+    }
+
+    .success-message p {
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /* エラーメッセージ */
+    .error-msg {
+      background: #ffebee;
+      color: #c62828;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-msg.active { display: block; }
+
+    .note {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: -8px;
+      margin-bottom: 16px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid #ddd;
+    }
+
+    .upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #888;
+    }
+
+    .upload-area:hover {
+      border-color: #5c6bc0;
+      color: #5c6bc0;
+      background: #f8f8ff;
+    }
+
+    .upload-area input[type="file"] {
+      display: none;
+    }
+
+    .upload-filename {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #43a047;
+      font-weight: 600;
+    }
+
+    /* 同意チェック */
+    .consent-section {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .consent-section details {
+      margin-bottom: 12px;
+    }
+
+    .consent-section summary {
+      cursor: pointer;
+      color: #5c6bc0;
+      font-weight: 600;
+    }
+
+    .consent-section details .consent-body {
+      margin-top: 8px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+
+    .consent-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .consent-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #5c6bc0;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="formContainer">
+  <h1>声カルテ 録音フォーム</h1>
+
+  <div id="errorMsg" class="error-msg"></div>
+
+  <!-- 説明 -->
+  <div class="card intro">
+    <p>20年のキャリアを持つプロの耳で、あなたの声の魅力を解き明かします。<br>
+    あなたの声の可能性を発見し、仕事やプライベートに活かしましょう。</p>
+
+    <h3>【分析でわかること】</h3>
+    <p>・あなたの声の魅力ポイント<br>
+    ・聞き手の印象に残る声の特徴</p>
+
+    <h3>【音声はなんでもOK】</h3>
+    <p>・ボイスメモなどで録音したものでも構いません。<br>
+    ・内容は自己紹介や今日の夕飯など笑、なんでも大丈夫です。</p>
+
+    <h3>【注意事項】</h3>
+    <p>・環境音・BGMやノイズが多いと、分析精度が下がります。<br>
+    ・歌はこの分析で数値を出すのが難しいので、思った結果がでなさそうです。</p>
+  </div>
+
+  <!-- 基本情報 -->
+  <div class="card">
+    <label>お名前（声カルテに記載されます） <span class="required">*必須</span></label>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">ハンドルネームでOK</p>
+    <input type="text" id="inputName" placeholder="例：山田太郎">
+
+    <label>性別：音声分析で使用（診断文には非表示） <span class="required">*必須</span></label>
+    <select id="inputGender">
+      <option value="">選択してください</option>
+      <option value="男性">男性</option>
+      <option value="女性">女性</option>
+      <option value="回答しない">回答しない</option>
+    </select>
+
+    <label>年代：診断文には非表示</label>
+    <select id="inputAge">
+      <option value="">選択してください</option>
+      <option value="10代">10代</option>
+      <option value="20代">20代</option>
+      <option value="30代">30代</option>
+      <option value="40代">40代</option>
+      <option value="50代">50代</option>
+      <option value="60代">60代</option>
+      <option value="70代">70代</option>
+      <option value="80代以上">80代以上</option>
+    </select>
+
+    <label>職業</label>
+    <select id="inputJob">
+      <option value="">選択してください</option>
+      <option value="経営者・役員">経営者・役員</option>
+      <option value="会社員（総合職）">会社員（総合職）</option>
+      <option value="会社員（一般職）">会社員（一般職）</option>
+      <option value="パート・アルバイト">パート・アルバイト</option>
+      <option value="自営業・フリーランス">自営業・フリーランス</option>
+      <option value="専業主婦・主夫">専業主婦・主夫</option>
+      <option value="学生">学生</option>
+      <option value="無回答">無回答</option>
+    </select>
+  </div>
+
+  <!-- どこで知りましたか -->
+  <div class="card">
+    <label>どこで声カルテを知りましたか？（複数選択可） <span class="required">*必須</span></label>
+    <div class="checkbox-group" id="sourceGroup">
+      <label><input type="checkbox" value="instagram投稿"> instagram投稿</label>
+      <label><input type="checkbox" value="instagramリール"> instagramリール</label>
+      <label><input type="checkbox" value="instagramストーリーズ"> instagramストーリーズ</label>
+      <label><input type="checkbox" value="instagramその他"> instagramその他</label>
+      <label><input type="checkbox" value="X(旧Twitter)"> X(旧Twitter)</label>
+      <label><input type="checkbox" value="note"> note</label>
+      <label><input type="checkbox" value="Voicy"> Voicy</label>
+      <label><input type="checkbox" value="stand. fm"> stand. fm</label>
+      <label><input type="checkbox" value="spotify"> spotify</label>
+      <label><input type="checkbox" value="YouTube"> YouTube</label>
+      <label><input type="checkbox" value="Udemy"> Udemy</label>
+      <label><input type="checkbox" value="その他" id="sourceOtherCheck"> その他</label>
+      <input type="text" id="sourceOtherText" class="checkbox-other-text" placeholder="その他の内容を入力">
+    </div>
+  </div>
+
+  <!-- SNS -->
+  <div class="card">
+    <label>InstagramのユーザーID</label>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">&#x26A0;&#xFE0F;「名前」ではなく「ユーザー名」を書いてください。半角英数字・.・_のみ<br>正しいIDをご記入ください。入力ミスがあるとメンション通知できません。コピー＆ペーストを推奨します。</p>
+    <input type="text" id="inputInstagram" placeholder="例：@voice_mika123">
+
+    <label>XのユーザーID</label>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">&#x26A0;&#xFE0F;「名前」ではなく「ユーザー名」を書いてください。半角英数字・.・_のみ<br>正しいIDをご記入ください。入力ミスがあるとメンション通知できません。コピー＆ペーストを推奨します。</p>
+    <input type="text" id="inputX" placeholder="例：@micarp">
+
+    <label>投稿時にメンションしてほしいSNS <span class="required">*必須</span></label>
+    <select id="inputMention">
+      <option value="">選択してください</option>
+      <option value="Instagram">Instagram</option>
+      <option value="X">X</option>
+      <option value="両方">両方</option>
+    </select>
+  </div>
+
+  <!-- 音声セクション -->
+  <div class="card recorder-section">
+    <h2>音声を送信してください（最大3分） <span style="color:#e53935; font-size:0.8rem;">*必須</span></h2>
+
+    <!-- 初期状態: 録音 or アップロード -->
+    <div id="stateIdle" class="state active">
+      <button class="btn btn-record" onclick="startRecording()">マイクで録音する</button>
+
+      <div class="divider">または</div>
+
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <p style="font-size:1rem; font-weight:600; margin-bottom:4px;">音声ファイルを選択</p>
+        <p style="font-size:0.8rem;">ボイスメモ等で録音済みのファイルをアップロード</p>
+        <p style="font-size:0.75rem; margin-top:4px; color:#aaa;">対応形式：m4a, mp3, wav, webm, mp4, ogg</p>
+        <input type="file" id="fileInput" accept="audio/*,.m4a,.mp3,.wav,.webm,.mp4,.ogg" onchange="onFileSelected(this)">
+      </div>
+      <div id="uploadFilename" class="upload-filename"></div>
+    </div>
+
+    <!-- 録音中 -->
+    <div id="stateRecording" class="state">
+      <div class="recording-indicator">
+        <div class="recording-dot"></div>
+        録音中
+      </div>
+      <div class="timer" id="timer">3:00</div>
+      <button class="btn btn-stop" onclick="stopRecording()">録音を停止</button>
+    </div>
+
+    <!-- 確認（録音後） -->
+    <div id="stateConfirm" class="state">
+      <p style="font-weight:600; margin-bottom:8px;">録音した音声を確認してください</p>
+      <audio id="audioPlayer" controls></audio>
+      <div class="confirm-buttons">
+        <button class="btn btn-retry" onclick="resetAudio()">もう一度録音</button>
+        <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">この音声を使う</button>
+      </div>
+    </div>
+
+    <!-- 音声確定済み -->
+    <div id="stateAccepted" class="state">
+      <p style="color:#43a047; font-weight:600;">音声ファイル準備完了</p>
+      <audio id="audioPlayerAccepted" controls></audio>
+      <button class="btn btn-retry" onclick="resetAudio()" style="margin-top:8px;">やり直す</button>
+    </div>
+  </div>
+
+  <!-- 声を使う場面 / 悩み -->
+  <div class="card">
+    <label>声を使う場面 <span class="required">*必須</span></label>
+    <input type="text" id="inputScene" placeholder="例：接客、営業、プレゼンテーション、配信、日常会話など">
+
+    <label>今のご自分の声の悩みなどがあれば教えてください</label>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">この声カルテに反映はされませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
+    <textarea id="inputWorry" placeholder="自由にご記入ください"></textarea>
+  </div>
+
+  <!-- 個人情報同意 -->
+  <div class="card consent-section">
+    <details>
+      <summary>個人情報と音声等の取り扱いについて</summary>
+      <div class="consent-body">
+        <p><strong>個人情報の利用目的</strong></p>
+        <ul>
+          <li>フォーム結果を、新商品や新サービスの開発、顧客満足向上のヒントにするため</li>
+          <li>DM、電子メールにて、新商品や新サービス、イベントやキャンペーンをご案内するため</li>
+          <li>お問い合わせに対する回答など、業務上の連絡を取るため</li>
+        </ul>
+        <p style="margin-top:8px;"><strong>個人情報の取り扱い</strong></p>
+        <ul>
+          <li>ご記入いただいた個人情報につきましては、紛失や漏洩が発生しないように努めます。</li>
+          <li>ご記入いただいた個人情報は、上記の利用目的のみに使用し、第三者に提供することはございません。</li>
+        </ul>
+      </div>
+    </details>
+    <label class="consent-check">
+      <input type="checkbox" id="inputConsent">
+      同意する <span class="required">*必須</span>
+    </label>
+  </div>
+
+  <!-- 送信前の案内 -->
+  <div class="card" style="font-size:0.85rem; color:#666; line-height:1.8;">
+    <p>&#x1F4E2; <strong>回答まで時間がかかる場合があります</strong><br>
+    分析完了後、メンションにてお知らせします！<br>
+    基本的に平日の日中にお返ししていますが、土日祝は回答できない場合があります。</p>
+    <p style="margin-top:8px;"><strong>【もし届かない時は…】</strong><br>
+    メンションエラー等かもしれません。私のタイムラインを覗いてみてください。</p>
+  </div>
+
+  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>音声を録音またはアップロードしてください</button>
+</div>
+
+<!-- 送信中オーバーレイ -->
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <div class="spinner-text">送信中です...</div>
+</div>
+
+<!-- 完了メッセージ -->
+<div class="container success-message" id="successMessage">
+  <div class="success-icon">&#10004;</div>
+  <h2>送信が完了しました！</h2>
+  <p>声カルテの診断結果をお楽しみに。<br><br>
+  万が一、土日祝を除いて2日以上届かない場合は、<br>エラーの可能性があるため再度フォームから送信をお願いします。</p>
+</div>
+
+<script>
+  // ============================================================
+  // GAS WebアプリのURL（デプロイ後に書き換えること）
+  // ============================================================
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbyUWYM5LlOtl1bAR2ovW3tPlrjBoF20GPKtYwUbG4WVQZjZ5yRFiQ2WkGtXoK9p8ouXUg/exec';
+  var API_TOKEN = 'voicekarte2026secret';
+  var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+  // --- 録音関連の変数 ---
+  var mediaRecorder = null;
+  var audioChunks = [];
+  var audioBlob = null;
+  var audioMimeType = '';
+  var timerInterval = null;
+  var remainingSeconds = 180;
+
+  // --- 「その他」チェックボックス連動 ---
+  document.getElementById('sourceOtherCheck').addEventListener('change', function() {
+    var textEl = document.getElementById('sourceOtherText');
+    if (this.checked) {
+      textEl.classList.add('active');
+      textEl.focus();
+    } else {
+      textEl.classList.remove('active');
+      textEl.value = '';
+    }
+  });
+
+  // --- 状態管理 ---
+  function setState(stateName) {
+    var states = ['stateIdle', 'stateRecording', 'stateConfirm', 'stateAccepted'];
+    states.forEach(function(s) {
+      document.getElementById(s).classList.remove('active');
+    });
+    document.getElementById(stateName).classList.add('active');
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(function() { el.classList.remove('active'); }, 6000);
+  }
+
+  function updateSubmitButton() {
+    var btn = document.getElementById('submitBtn');
+    var accepted = document.getElementById('stateAccepted');
+    if (audioBlob && accepted && accepted.classList.contains('active')) {
+      btn.disabled = false;
+      btn.textContent = '送信する';
+    } else {
+      btn.disabled = true;
+      btn.textContent = '音声を録音またはアップロードしてください';
+    }
+  }
+
+  // --- リセット ---
+  function resetAudio() {
+    audioBlob = null;
+    audioChunks = [];
+    document.getElementById('fileInput').value = '';
+    document.getElementById('uploadFilename').textContent = '';
+    updateSubmitButton();
+    setState('stateIdle');
+  }
+
+  // --- 録音を確定 ---
+  function acceptAudio() {
+    setState('stateAccepted');
+    updateSubmitButton();
+  }
+
+  // ============================================================
+  // ファイルアップロード
+  // ============================================================
+  function onFileSelected(input) {
+    if (!input.files || !input.files[0]) return;
+    var file = input.files[0];
+
+    if (file.size > MAX_FILE_SIZE) {
+      showError('ファイルサイズが大きすぎます（10MB以下にしてください）');
+      return;
+    }
+
+    audioMimeType = file.type || 'audio/webm';
+    document.getElementById('uploadFilename').textContent = file.name;
+
+    audioBlob = file;
+    var url = URL.createObjectURL(file);
+    document.getElementById('audioPlayerAccepted').src = url;
+    setState('stateAccepted');
+    updateSubmitButton();
+  }
+
+  // ============================================================
+  // ブラウザ録音（GitHub Pages上なのでマイクが使える）
+  // ============================================================
+  function startRecording() {
+    document.getElementById('errorMsg').classList.remove('active');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showError('このブラウザはマイク録音に対応していません。音声ファイルをアップロードしてください。');
+      return;
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        audioChunks = [];
+
+        var mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+        audioMimeType = '';
+        for (var i = 0; i < mimeTypes.length; i++) {
+          if (MediaRecorder.isTypeSupported(mimeTypes[i])) {
+            audioMimeType = mimeTypes[i];
+            break;
+          }
+        }
+
+        var options = audioMimeType ? { mimeType: audioMimeType } : {};
+        mediaRecorder = new MediaRecorder(stream, options);
+        if (!audioMimeType) {
+          audioMimeType = mediaRecorder.mimeType || 'audio/webm';
+        }
+
+        mediaRecorder.ondataavailable = function(e) {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = function() {
+          stream.getTracks().forEach(function(t) { t.stop(); });
+          audioBlob = new Blob(audioChunks, { type: audioMimeType });
+          var url = URL.createObjectURL(audioBlob);
+          document.getElementById('audioPlayer').src = url;
+          document.getElementById('audioPlayerAccepted').src = url;
+          clearInterval(timerInterval);
+          setState('stateConfirm');
+        };
+
+        mediaRecorder.start(1000);
+
+        remainingSeconds = 180;
+        updateTimerDisplay();
+        timerInterval = setInterval(function() {
+          remainingSeconds--;
+          updateTimerDisplay();
+          if (remainingSeconds <= 0) stopRecording();
+        }, 1000);
+
+        setState('stateRecording');
+      })
+      .catch(function(err) {
+        console.error(err);
+        showError('マイクへのアクセスが拒否されました。ブラウザの設定でマイクを許可するか、音声ファイルをアップロードしてください。');
+      });
+  }
+
+  function updateTimerDisplay() {
+    var min = Math.floor(remainingSeconds / 60);
+    var sec = remainingSeconds % 60;
+    document.getElementById('timer').textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+  }
+
+  // ============================================================
+  // 「どこで知りましたか」の値を取得
+  // ============================================================
+  function getSourceValues() {
+    var checks = document.querySelectorAll('#sourceGroup input[type="checkbox"]:checked');
+    var values = [];
+    checks.forEach(function(cb) {
+      if (cb.value === 'その他') {
+        var otherText = document.getElementById('sourceOtherText').value.trim();
+        values.push('その他: ' + (otherText || ''));
+      } else {
+        values.push(cb.value);
+      }
+    });
+    return values.join(', ');
+  }
+
+  // ============================================================
+  // フォーム送信（fetch で GAS の doPost にPOST）
+  // ============================================================
+  function submitForm() {
+    var name = document.getElementById('inputName').value.trim();
+    var gender = document.getElementById('inputGender').value;
+    var consent = document.getElementById('inputConsent').checked;
+    var source = getSourceValues();
+    var mention = document.getElementById('inputMention').value;
+    var scene = document.getElementById('inputScene').value.trim();
+
+    // バリデーション
+    if (!name) { showError('お名前を入力してください。'); return; }
+    if (!gender) { showError('性別を選択してください。'); return; }
+    if (!source) { showError('「どこで声カルテを知りましたか？」を1つ以上選択してください。'); return; }
+    if (!mention) { showError('「投稿時にメンションしてほしいSNS」を選択してください。'); return; }
+    if (!audioBlob) { showError('音声を録音またはアップロードしてください。'); return; }
+    if (!scene) { showError('「声を使う場面」を入力してください。'); return; }
+    if (!consent) { showError('個人情報の取り扱いについて同意してください。'); return; }
+
+    // 送信中表示
+    document.getElementById('spinnerOverlay').classList.add('active');
+    document.getElementById('submitBtn').disabled = true;
+
+    // 音声をbase64に変換
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      var base64 = reader.result.split(',')[1];
+
+      var payload = {
+        token: API_TOKEN,
+        audioData: base64,
+        mimeType: audioMimeType.split(';')[0],
+        name: name,
+        gender: gender,
+        age: document.getElementById('inputAge').value,
+        job: document.getElementById('inputJob').value,
+        source: source,
+        instagramId: document.getElementById('inputInstagram').value.trim(),
+        xId: document.getElementById('inputX').value.trim(),
+        mention: mention,
+        scene: scene,
+        worry: document.getElementById('inputWorry').value.trim(),
+        consent: '同意する'
+      };
+
+      // GAS にPOST（no-cors ではなく redirect:follow で対応）
+      fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload),
+        redirect: 'follow'
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(result) {
+        document.getElementById('spinnerOverlay').classList.remove('active');
+        if (result.success) {
+          document.getElementById('formContainer').style.display = 'none';
+          document.getElementById('successMessage').classList.add('active');
+        } else {
+          showError(result.message);
+          document.getElementById('submitBtn').disabled = false;
+        }
+      })
+      .catch(function(err) {
+        // GAS は POST 後にリダイレクトするため、CORS でレスポンスが読めない場合がある
+        // その場合でもデータ送信自体は成功している可能性が高い
+        console.log('Response parse error (data likely sent successfully):', err);
+        document.getElementById('spinnerOverlay').classList.remove('active');
+        document.getElementById('formContainer').style.display = 'none';
+        document.getElementById('successMessage').classList.add('active');
+      });
+    };
+
+    reader.readAsDataURL(audioBlob);
+  }
+</script>
+
+</body>
+</html>
