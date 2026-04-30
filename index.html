@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>声カルテ 録音フォーム</title>
+  <title>声タイプ別診断 録音フォーム</title>
+  <meta property="og:title" content="声タイプ別診断 録音フォーム">
+  <meta property="og:description" content="プロの耳であなたの声の魅力を解き明かします。録音またはファイルアップロードで簡単診断。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://micarp1221git.github.io/voice-karte-form/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="声タイプ別診断 録音フォーム">
+  <meta name="twitter:description" content="プロの耳であなたの声の魅力を解き明かします。録音またはファイルアップロードで簡単診断。">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -404,7 +411,7 @@
 <body>
 
 <div class="container" id="formContainer">
-  <h1>声カルテ 録音フォーム</h1>
+  <h1>声タイプ別診断 録音フォーム</h1>
 
   <div id="errorMsg" class="error-msg"></div>
 
@@ -436,7 +443,7 @@
     </p>
     <input type="text" id="inputEmail" placeholder="例：example@gmail.com" inputmode="email">
 
-    <label>お名前（声カルテに記載されます） <span class="required">*必須</span></label>
+    <label>お名前（声タイプ別診断に記載されます） <span class="required">*必須</span></label>
     <p class="note" style="margin-top:0; margin-bottom:8px;">ハンドルネームでOK</p>
     <input type="text" id="inputName" placeholder="例：山田太郎">
 
@@ -477,7 +484,7 @@
 
   <!-- どこで知りましたか -->
   <div class="card">
-    <label>どこで声カルテを知りましたか？（複数選択可） <span class="required">*必須</span></label>
+    <label>どこで声タイプ別診断を知りましたか？（複数選択可） <span class="required">*必須</span></label>
     <div class="checkbox-group" id="sourceGroup">
       <label><input type="checkbox" value="instagram投稿"> instagram投稿</label>
       <label><input type="checkbox" value="instagramリール"> instagramリール</label>
@@ -567,7 +574,7 @@
     <input type="text" id="inputScene" placeholder="例：接客、営業、プレゼンテーション、配信、日常会話など">
 
     <label>今のご自分の声の悩みなどがあれば教えてください</label>
-    <p class="note" style="margin-top:0; margin-bottom:8px;">この声カルテに反映はされませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">この声タイプ別診断に反映はされませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
     <textarea id="inputWorry" placeholder="自由にご記入ください"></textarea>
   </div>
 
@@ -617,7 +624,7 @@
 <div class="container success-message" id="successMessage">
   <div class="success-icon">&#10004;</div>
   <h2>送信が完了しました！</h2>
-  <p>声カルテの診断結果をお楽しみに。<br><br>
+  <p>声タイプ別診断の結果をお楽しみに。<br><br>
   万が一、土日祝を除いて2日以上届かない場合は、<br>エラーの可能性があるため再度フォームから送信をお願いします。</p>
 </div>
 
@@ -824,7 +831,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
     if (!name) { showError('お名前を入力してください。'); return; }
     if (!gender) { showError('性別を選択してください。'); return; }
-    if (!source) { showError('「どこで声カルテを知りましたか？」を1つ以上選択してください。'); return; }
+    if (!source) { showError('「どこで声タイプ別診断を知りましたか？」を1つ以上選択してください。'); return; }
     if (!mention) { showError('「投稿時にメンションしてほしいSNS」を選択してください。'); return; }
     if (!audioBlob) { showError('音声を録音またはアップロードしてください。'); return; }
     if (!scene) { showError('「声を使う場面」を入力してください。'); return; }
