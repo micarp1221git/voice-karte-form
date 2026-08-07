@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>診断結果 | 声タイプ診断</title>
+  <meta property="og:title" content="あなたの声、なにタイプ？｜声タイプ診断">
+  <meta property="og:description" content="ボタンを押して話すだけ。プロの耳があなたの声の魅力とタイプをみつけます。">
+  <meta property="og:type" content="website">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+      background: #FDF2F5;
+      color: #333;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .container { max-width: 520px; margin: 0 auto; padding: 32px 20px 48px; }
+    .lead { font-size: 1rem; color: #555; margin-bottom: 4px; }
+    .name { font-size: 1.1rem; font-weight: 700; color: #2B4BBF; margin-bottom: 18px; }
+    .type-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 24px 30px;
+      box-shadow: 0 6px 24px rgba(232,92,138,0.18);
+      margin-bottom: 22px;
+    }
+    .type-emoji { font-size: 4.2rem; line-height: 1; }
+    .type-name {
+      font-size: 3.2rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+      margin: 10px 0 2px;
+      color: #E85C8A;
+    }
+    .type-suffix { font-size: 1.5rem; font-weight: 700; color: #2B4BBF; }
+    .voicy-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: #2B4BBF;
+      text-decoration: underline;
+    }
+    .share-title { font-size: 0.95rem; font-weight: 700; color: #444; margin: 26px 0 12px; }
+    .share-buttons { display: flex; flex-direction: column; gap: 10px; }
+    .share-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      color: #fff;
+    }
+    .share-native { background: #E85C8A; }
+    .share-x { background: #111; }
+    .share-line { background: #06C755; }
+    .share-copy { background: #fff; color: #555; border: 1.5px solid #ddd; }
+    .cta {
+      display: block;
+      margin-top: 30px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #2B4BBF;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .note { margin-top: 14px; font-size: 0.75rem; color: #aaa; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <p class="lead">診断結果</p>
+  <p class="name" id="who"></p>
+
+  <div class="type-card">
+    <div class="type-emoji" id="typeEmoji">🎤</div>
+    <div class="type-name" id="typeName">−</div>
+    <div class="type-suffix">タイプ</div>
+    <a class="voicy-link" id="voicyLink" href="#" target="_blank" rel="noopener" style="display:none;">このタイプの解説をきく（Voicy）</a>
+  </div>
+
+  <p class="share-title">結果をシェアする</p>
+  <div class="share-buttons">
+    <button class="share-btn share-native" id="btnNative" onclick="shareNative()">シェアする</button>
+    <a class="share-btn share-x" id="btnX" href="#" target="_blank" rel="noopener">Xでシェア</a>
+    <a class="share-btn share-line" id="btnLine" href="#" target="_blank" rel="noopener">LINEで送る</a>
+    <button class="share-btn share-copy" onclick="copyLink(this)">リンクをコピー</button>
+  </div>
+
+  <a class="cta" href="./">自分の声も診断してみる</a>
+  <p class="note">診断は無料・ボタンを押して話すだけ</p>
+</div>
+
+<script>
+  // タイプ表（名前・絵文字・Voicy解説）。診断パイプライン(type_links.py)と同じ7種
+  var TYPES = {
+    'くじゃく': { emoji: '🦚', voicy: 'https://voicy.jp/channel/820969/7717282' },
+    'くじら':   { emoji: '🐋', voicy: 'https://voicy.jp/channel/820969/7748786' },
+    'くま':     { emoji: '🐻', voicy: 'https://voicy.jp/channel/820969/7700797' },
+    'ねこ':     { emoji: '🐱', voicy: 'https://voicy.jp/channel/820969/7714309' },
+    'いぬ':     { emoji: '🐕', voicy: 'https://voicy.jp/channel/820969/7713727' },
+    'インコ':   { emoji: '🦜', voicy: 'https://voicy.jp/channel/820969/7725562' },
+    'ひつじ':   { emoji: '🐑', voicy: 'https://voicy.jp/channel/820969/7733682' }
+  };
+
+  var params = new URLSearchParams(location.search);
+  var type = params.get('type') || '';
+  var name = (params.get('n') || '').slice(0, 30);
+
+  var t = TYPES[type];
+  if (t) {
+    document.getElementById('typeName').textContent = type;
+    document.getElementById('typeEmoji').textContent = t.emoji;
+    var v = document.getElementById('voicyLink');
+    v.href = t.voicy;
+    v.style.display = 'inline-block';
+  } else {
+    document.getElementById('typeName').textContent = '？';
+  }
+  if (name) {
+    document.getElementById('who').textContent = name + ' さんの声は';
+  } else {
+    document.getElementById('who').textContent = 'あなたの声は';
+  }
+
+  // シェアURLには名前を入れない（本人のプライバシー既定）
+  var shareUrl = location.origin + location.pathname + '?type=' + encodeURIComponent(type);
+  var shareText = type ? 'わたしの声は「' + type + 'タイプ」でした！ #声タイプ診断' : '#声タイプ診断';
+
+  document.getElementById('btnX').href =
+    'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(shareUrl);
+  document.getElementById('btnLine').href =
+    'https://line.me/R/share?text=' + encodeURIComponent(shareText + ' ' + shareUrl);
+
+  function shareNative() {
+    if (navigator.share) {
+      navigator.share({ text: shareText, url: shareUrl }).catch(function(){});
+    } else {
+      copyLink(document.getElementById('btnNative'));
+    }
+  }
+  function copyLink(btn) {
+    navigator.clipboard.writeText(shareUrl).then(function() {
+      var old = btn.textContent;
+      btn.textContent = 'コピーしました';
+      setTimeout(function(){ btn.textContent = old; }, 1500);
+    });
+  }
+  // スマホ以外ではOSのシェアシートが無いことが多いので、無ければボタンを隠す
+  if (!navigator.share) document.getElementById('btnNative').style.display = 'none';
+</script>
+</body>
+</html>
