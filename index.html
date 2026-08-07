@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>声タイプ別診断 録音フォーム</title>
-  <meta property="og:title" content="声タイプ別診断 録音フォーム">
-  <meta property="og:description" content="プロの耳であなたの声の魅力を解き明かします。録音またはファイルアップロードで簡単診断。">
+  <title>声タイプ別診断 | あなたの声、なにタイプ？</title>
+  <meta property="og:title" content="あなたの声、なにタイプ？｜声タイプ別診断">
+  <meta property="og:description" content="ボタンを押して話すだけ。プロの耳があなたの声の魅力とタイプをみつけます。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://micarp1221git.github.io/voice-karte-form/">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="声タイプ別診断 録音フォーム">
-  <meta name="twitter:description" content="プロの耳であなたの声の魅力を解き明かします。録音またはファイルアップロードで簡単診断。">
+  <meta name="twitter:title" content="あなたの声、なにタイプ？｜声タイプ別診断">
+  <meta name="twitter:description" content="ボタンを押して話すだけ。プロの耳があなたの声の魅力とタイプをみつけます。">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -406,31 +406,138 @@
       accent-color: #5c6bc0;
       flex-shrink: 0;
     }
+
+    /* ===== record-first ヒーロー（2026-08-08・参考: こえはかる系の即ボタンUX） ===== */
+    .hero {
+      text-align: center;
+      padding: 40px 8px 24px;
+    }
+    .hero-title {
+      font-size: 1.9rem;
+      line-height: 1.4;
+      color: #222;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.9;
+      margin-bottom: 32px;
+    }
+    .hero-mic {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(145deg, #5c6bc0, #3f51b5);
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(63,81,181,0.35), 0 2px 8px rgba(0,0,0,0.12);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hero-mic:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 14px rgba(63,81,181,0.3);
+    }
+    .hero-mic-icon { font-size: 2.2rem; }
+    .hero-mic-label {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: 0.05em;
+    }
+    .hero-hint {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.9;
+    }
+    .hero-hint-sub { font-size: 0.8rem; color: #999; display: block; margin-top: 2px; }
+    .hero-upload {
+      margin-top: 26px;
+      font-size: 0.85rem;
+    }
+    .hero-upload a {
+      color: #5c6bc0;
+      text-decoration: underline;
+    }
+    .hero-note {
+      margin-top: 26px;
+      font-size: 0.75rem;
+      color: #aaa;
+      line-height: 1.8;
+    }
+    #heroScreen .state { display: none; }
+    #heroScreen .state.active { display: block; }
   </style>
 </head>
 <body>
 
-<div class="container" id="formContainer">
-  <h1>声タイプ別診断 録音フォーム</h1>
-
+<!-- ============ 画面1: まず声（record-first・2026-08-08みかさん指示） ============ -->
+<div class="container" id="heroScreen">
   <div id="errorMsg" class="error-msg"></div>
 
-  <!-- 説明 -->
-  <div class="card intro">
-    <p>20年のキャリアを持つプロの耳で、あなたの声の魅力を解き明かします。<br>
-    あなたの声の可能性を発見し、仕事やプライベートに活かしましょう。</p>
+  <div class="hero">
+    <h1 class="hero-title">あなたの声、<br>なにタイプ？</h1>
+    <p class="hero-sub">プロの耳が20年の経験できいて、<br>あなたの声の魅力とタイプをみつけます。</p>
 
-    <h3>【分析でわかること】</h3>
-    <p>・あなたの声の魅力ポイント<br>
-    ・聞き手の印象に残る声の特徴</p>
+    <!-- 初期状態: 大きなボタン1つ -->
+    <div id="stateIdle" class="state active">
+      <button class="hero-mic" onclick="startRecording()">
+        <span class="hero-mic-icon">🎙</span>
+        <span class="hero-mic-label">声を<br>きかせる</span>
+      </button>
+      <p class="hero-hint">ボタンを押したら、そのまま話しかけてください。<br>
+      自己紹介でも、今日の夕飯の話でも。<span class="hero-hint-sub">（最大3分・途中で止められます）</span></p>
 
-    <h3>【音声はなんでもOK】</h3>
-    <p>・ボイスメモなどで録音したものでも構いません。<br>
-    ・内容は自己紹介や今日の夕飯など笑、なんでも大丈夫です。</p>
+      <div class="hero-upload">
+        <a href="#" onclick="document.getElementById('fileInput').click(); return false;">ボイスメモなど、手もとのファイルを使う</a>
+        <input type="file" id="fileInput" accept="audio/*,.m4a,.mp3,.wav,.webm,.mp4,.ogg" onchange="onFileSelected(this)" style="display:none;">
+        <div id="uploadFilename" class="upload-filename"></div>
+      </div>
 
-    <h3>【注意事項】</h3>
-    <p>・環境音・BGMやノイズが多いと、分析精度が下がります。<br>
-    ・歌はこの分析で数値を出すのが難しいので、思った結果がでなさそうです。</p>
+      <p class="hero-note">まわりの音が大きいと、きき取りの精度が下がります。<br>歌は数値が出しにくいため、話し声でお願いします。</p>
+    </div>
+
+    <!-- きいている（録音中） -->
+    <div id="stateRecording" class="state">
+      <div class="recording-indicator">
+        <div class="recording-dot"></div>
+        きいています
+      </div>
+      <div class="timer" id="timer">3:00</div>
+      <button class="btn btn-stop" onclick="stopRecording()">話しおわった</button>
+    </div>
+
+    <!-- 確認 -->
+    <div id="stateConfirm" class="state">
+      <p style="font-weight:600; margin-bottom:8px;">この声でいいか、きいてみてください</p>
+      <audio id="audioPlayer" controls></audio>
+      <div class="confirm-buttons">
+        <button class="btn btn-retry" onclick="resetAudio()">もういちど</button>
+        <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">この声でおねがいする</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 画面2: 声のあとに、かんたんな入力 ============ -->
+<div class="container" id="formContainer" style="display:none;">
+  <h1>あとは、お届け先だけ</h1>
+
+  <!-- 音声確定済み -->
+  <div class="card recorder-section">
+    <div id="stateAccepted" class="state active">
+      <p style="color:#43a047; font-weight:600;">声、うけとりました</p>
+      <audio id="audioPlayerAccepted" controls></audio>
+      <button class="btn btn-retry" onclick="resetAudio()" style="margin-top:8px;">やり直す</button>
+    </div>
   </div>
 
   <!-- 基本情報 -->
@@ -521,53 +628,6 @@
     </select>
   </div>
 
-  <!-- 音声セクション -->
-  <div class="card recorder-section">
-    <h2>音声を送信してください（最大3分） <span style="color:#e53935; font-size:0.8rem;">*必須</span></h2>
-
-    <!-- 初期状態: 録音 or アップロード -->
-    <div id="stateIdle" class="state active">
-      <button class="btn btn-record" onclick="startRecording()">マイクで録音する</button>
-
-      <div class="divider">または</div>
-
-      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-        <p style="font-size:1rem; font-weight:600; margin-bottom:4px;">音声ファイルを選択</p>
-        <p style="font-size:0.8rem;">ボイスメモ等で録音済みのファイルをアップロード</p>
-        <p style="font-size:0.75rem; margin-top:4px; color:#aaa;">対応形式：m4a, mp3, wav, webm, mp4, ogg</p>
-        <input type="file" id="fileInput" accept="audio/*,.m4a,.mp3,.wav,.webm,.mp4,.ogg" onchange="onFileSelected(this)">
-      </div>
-      <div id="uploadFilename" class="upload-filename"></div>
-    </div>
-
-    <!-- 録音中 -->
-    <div id="stateRecording" class="state">
-      <div class="recording-indicator">
-        <div class="recording-dot"></div>
-        録音中
-      </div>
-      <div class="timer" id="timer">3:00</div>
-      <button class="btn btn-stop" onclick="stopRecording()">録音を停止</button>
-    </div>
-
-    <!-- 確認（録音後） -->
-    <div id="stateConfirm" class="state">
-      <p style="font-weight:600; margin-bottom:8px;">録音した音声を確認してください</p>
-      <audio id="audioPlayer" controls></audio>
-      <div class="confirm-buttons">
-        <button class="btn btn-retry" onclick="resetAudio()">もう一度録音</button>
-        <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">この音声を使う</button>
-      </div>
-    </div>
-
-    <!-- 音声確定済み -->
-    <div id="stateAccepted" class="state">
-      <p style="color:#43a047; font-weight:600;">音声ファイル準備完了</p>
-      <audio id="audioPlayerAccepted" controls></audio>
-      <button class="btn btn-retry" onclick="resetAudio()" style="margin-top:8px;">やり直す</button>
-    </div>
-  </div>
-
   <!-- 声を使う場面 / 悩み -->
   <div class="card">
     <label>声を使う場面 <span class="required">*必須</span></label>
@@ -611,7 +671,7 @@
     メンションエラー等かもしれません。私のタイムラインを覗いてみてください。</p>
   </div>
 
-  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>音声を録音またはアップロードしてください</button>
+  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>送信する</button>
 </div>
 
 <!-- 送信中オーバーレイ -->
@@ -681,8 +741,20 @@
       btn.textContent = '送信する';
     } else {
       btn.disabled = true;
-      btn.textContent = '音声を録音またはアップロードしてください';
+      btn.textContent = '声が入っていません。「やり直す」からもう一度どうぞ';
     }
+  }
+
+  // --- 画面の切り替え（声が先・入力があと） ---
+  function showFormScreen() {
+    document.getElementById('heroScreen').style.display = 'none';
+    document.getElementById('formContainer').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function showHeroScreen() {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('heroScreen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // --- リセット ---
@@ -693,12 +765,14 @@
     document.getElementById('uploadFilename').textContent = '';
     updateSubmitButton();
     setState('stateIdle');
+    showHeroScreen();
   }
 
-  // --- 録音を確定 ---
+  // --- 声を確定 → 入力画面へ ---
   function acceptAudio() {
     setState('stateAccepted');
     updateSubmitButton();
+    showFormScreen();
   }
 
   // ============================================================
@@ -721,6 +795,7 @@
     document.getElementById('audioPlayerAccepted').src = url;
     setState('stateAccepted');
     updateSubmitButton();
+    showFormScreen();
   }
 
   // ============================================================
@@ -730,7 +805,7 @@
     document.getElementById('errorMsg').classList.remove('active');
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      showError('このブラウザはマイク録音に対応していません。音声ファイルをアップロードしてください。');
+      showError('このブラウザではマイクが使えないようです。「ボイスメモなど、手もとのファイルを使う」からお願いします。');
       return;
     }
 
@@ -781,7 +856,7 @@
       })
       .catch(function(err) {
         console.error(err);
-        showError('マイクへのアクセスが拒否されました。ブラウザの設定でマイクを許可するか、音声ファイルをアップロードしてください。');
+        showError('マイクが許可されませんでした。ブラウザの設定でマイクを許可するか、「ボイスメモなど、手もとのファイルを使う」からお願いします。');
       });
   }
 
