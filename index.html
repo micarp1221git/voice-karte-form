@@ -16,7 +16,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
-      background: #f5f5f5;
+      background: #FDF2F5;
       color: #333;
       line-height: 1.6;
     }
@@ -31,7 +31,7 @@
       text-align: center;
       font-size: 1.4rem;
       margin-bottom: 24px;
-      color: #222;
+      color: #2B4BBF;
     }
 
     .card {
@@ -89,8 +89,8 @@
 
     input[type="text"]:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #5c6bc0;
-      box-shadow: 0 0 0 3px rgba(92,107,192,0.15);
+      border-color: #E85C8A;
+      box-shadow: 0 0 0 3px rgba(232,92,138,0.15);
     }
 
     select {
@@ -116,7 +116,7 @@
       width: 18px;
       height: 18px;
       margin-right: 10px;
-      accent-color: #5c6bc0;
+      accent-color: #E85C8A;
       flex-shrink: 0;
     }
 
@@ -167,13 +167,13 @@
     }
 
     .btn-record {
-      background: #e53935;
+      background: #E85C8A;
       color: #fff;
       font-size: 1.1rem;
       padding: 14px 36px;
     }
 
-    .btn-record:hover:not(:disabled) { background: #c62828; }
+    .btn-record:hover:not(:disabled) { background: #D14A78; }
 
     .btn-stop {
       background: #555;
@@ -192,14 +192,14 @@
     .btn-retry:hover { background: #ddd; }
 
     .btn-submit {
-      background: #43a047;
+      background: #E85C8A;
       color: #fff;
       width: 100%;
       font-size: 1.1rem;
       padding: 14px;
     }
 
-    .btn-submit:hover:not(:disabled) { background: #2e7d32; }
+    .btn-submit:hover:not(:disabled) { background: #D14A78; }
 
     .timer {
       font-size: 2rem;
@@ -269,7 +269,7 @@
       width: 48px;
       height: 48px;
       border: 4px solid #ddd;
-      border-top-color: #5c6bc0;
+      border-top-color: #E85C8A;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -403,7 +403,7 @@
     .consent-check input[type="checkbox"] {
       width: 20px;
       height: 20px;
-      accent-color: #5c6bc0;
+      accent-color: #E85C8A;
       flex-shrink: 0;
     }
 
@@ -415,7 +415,7 @@
     .hero-title {
       font-size: 1.9rem;
       line-height: 1.4;
-      color: #222;
+      color: #2B4BBF;
       margin-bottom: 12px;
     }
     .hero-sub {
@@ -430,9 +430,9 @@
       border-radius: 50%;
       border: none;
       cursor: pointer;
-      background: linear-gradient(145deg, #5c6bc0, #3f51b5);
+      background: linear-gradient(145deg, #F272A0, #E85C8A);
       color: #fff;
-      box-shadow: 0 10px 30px rgba(63,81,181,0.35), 0 2px 8px rgba(0,0,0,0.12);
+      box-shadow: 0 10px 30px rgba(232,92,138,0.35), 0 2px 8px rgba(0,0,0,0.12);
       display: inline-flex;
       flex-direction: column;
       align-items: center;
@@ -443,7 +443,7 @@
     }
     .hero-mic:active {
       transform: scale(0.96);
-      box-shadow: 0 4px 14px rgba(63,81,181,0.3);
+      box-shadow: 0 4px 14px rgba(232,92,138,0.3);
     }
     .hero-mic-icon { font-size: 2.2rem; }
     .hero-mic-label {
@@ -464,7 +464,7 @@
       font-size: 0.85rem;
     }
     .hero-upload a {
-      color: #5c6bc0;
+      color: #E85C8A;
       text-decoration: underline;
     }
     .hero-note {
@@ -491,7 +491,7 @@
     <div id="stateIdle" class="state active">
       <button class="hero-mic" onclick="startRecording()">
         <span class="hero-mic-icon">🎙</span>
-        <span class="hero-mic-label">声を<br>きかせる</span>
+        <span class="hero-mic-label">診断<br>開始</span>
       </button>
       <p class="hero-hint">ボタンを押したら、そのまま話しかけてください。<br>
       自己紹介でも、今日の夕飯の話でも。<span class="hero-hint-sub">（最大3分・途中で止められます）</span></p>
@@ -509,19 +509,19 @@
     <div id="stateRecording" class="state">
       <div class="recording-indicator">
         <div class="recording-dot"></div>
-        きいています
+        マイクに向かって話してください
       </div>
       <div class="timer" id="timer">3:00</div>
-      <button class="btn btn-stop" onclick="stopRecording()">話しおわった</button>
+      <button class="btn btn-stop" onclick="stopRecording()">終了</button>
     </div>
 
     <!-- 確認 -->
     <div id="stateConfirm" class="state">
-      <p style="font-weight:600; margin-bottom:8px;">この声でいいか、きいてみてください</p>
+      <p style="font-weight:600; margin-bottom:8px;">この音声でよければ、OKを押してください</p>
       <audio id="audioPlayer" controls></audio>
       <div class="confirm-buttons">
-        <button class="btn btn-retry" onclick="resetAudio()">もういちど</button>
-        <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">この声でおねがいする</button>
+        <button class="btn btn-retry" onclick="resetAudio()">もう一度</button>
+        <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">OK</button>
       </div>
     </div>
   </div>
@@ -529,12 +529,12 @@
 
 <!-- ============ 画面2: 声のあとに、かんたんな入力 ============ -->
 <div class="container" id="formContainer" style="display:none;">
-  <h1>あとは、お届け先だけ</h1>
+  <h1>お届け先の入力</h1>
 
   <!-- 音声確定済み -->
   <div class="card recorder-section">
     <div id="stateAccepted" class="state active">
-      <p style="color:#43a047; font-weight:600;">声、うけとりました</p>
+      <p style="color:#43a047; font-weight:600;">✓ この音声で診断します</p>
       <audio id="audioPlayerAccepted" controls></audio>
       <button class="btn btn-retry" onclick="resetAudio()" style="margin-top:8px;">やり直す</button>
     </div>
@@ -741,7 +741,7 @@
       btn.textContent = '送信する';
     } else {
       btn.disabled = true;
-      btn.textContent = '声が入っていません。「やり直す」からもう一度どうぞ';
+      btn.textContent = '音声がありません。「やり直す」を押してください';
     }
   }
 
