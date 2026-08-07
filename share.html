@@ -65,8 +65,8 @@
   var type = (params.get('type') || '').slice(0, 10);
   var imgUrl = params.get('img') || '';
 
-  // ⚠️ メンションの@アカウントは確定後に差し替え（X/Instagramで別名の可能性・みかさん確認待ち）
-  var MENTION = '@voice_mika';
+  // メンション確定: @micarp（2026-08-08みかさん）
+  var MENTION = '@micarp';
   var FORM_URL = 'https://micarp1221git.github.io/voice-karte-form/';
   var shareText = (type ? 'わたしの声は「' + type + 'タイプ」でした！ ' : '') +
     '声タイプ診断 ' + MENTION + ' #声タイプ診断 ' + FORM_URL;
