@@ -481,20 +481,12 @@
       letter-spacing: 0.08em;
       margin-bottom: 6px;
     }
-    .src-toggle[open] > summary { margin-bottom: 4px; }
-    .src-toggle .checkbox-group {
+    .src-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0 10px;
     }
-    .src-toggle .checkbox-other-text { grid-column: 1 / -1; }
-    .src-toggle > summary {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #444;
-      cursor: pointer;
-      padding: 4px 0 10px;
-    }
+    .src-grid .checkbox-other-text { grid-column: 1 / -1; }
     #heroScreen .state { display: none; }
     #heroScreen .state.active { display: block; }
   </style>
@@ -587,13 +579,13 @@
 
   </div>
 
-  <button class="btn btn-submit" onclick="goSurvey()">次へ（あと1ページ）</button>
+  <button class="btn btn-submit" onclick="goSurvey()">次へ</button>
 </div>
 
 <!-- ============ 画面3: かんたんアンケート ============ -->
 <div class="container" id="surveyContainer" style="display:none;">
   <p class="step-label">ステップ 3 / 3</p>
-  <h1>最後に、かんたんな質問</h1>
+  <h1>アンケート</h1>
 
   <div class="card">
     <label>年代：診断文には非表示</label>
@@ -625,9 +617,8 @@
 
   <!-- どこで知りましたか -->
   <div class="card">
-    <details class="src-toggle">
-      <summary>どこで声タイプ診断を知りましたか？（複数選択可）<span class="required">*必須</span></summary>
-    <div class="checkbox-group" id="sourceGroup">
+    <label>どこで声タイプ診断を知りましたか？（複数選択可） <span class="required">*必須</span></label>
+    <div class="checkbox-group src-grid" id="sourceGroup">
       <label><input type="checkbox" value="instagram投稿"> instagram投稿</label>
       <label><input type="checkbox" value="instagramリール"> instagramリール</label>
       <label><input type="checkbox" value="instagramストーリーズ"> instagramストーリーズ</label>
@@ -642,7 +633,6 @@
       <label><input type="checkbox" value="その他" id="sourceOtherCheck"> その他</label>
       <input type="text" id="sourceOtherText" class="checkbox-other-text" placeholder="その他の内容を入力">
     </div>
-    </details>
   </div>
 
   <!-- 声を使う場面 / 悩み -->
@@ -650,8 +640,11 @@
     <label>声を使う場面 <span class="required">*必須</span></label>
     <input type="text" id="inputScene" placeholder="例：接客、営業、プレゼンテーション、配信、日常会話など">
 
+  </div>
+
+  <div class="card">
     <label>今のご自分の声の悩みなどがあれば教えてください</label>
-    <p class="note" style="margin-top:0; margin-bottom:8px;">この声タイプ別診断に反映はされませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">診断結果には反映されませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
     <textarea id="inputWorry" placeholder="自由にご記入ください"></textarea>
   </div>
 
