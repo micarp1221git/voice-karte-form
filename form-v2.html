@@ -319,6 +319,20 @@
 
     .error-msg.active { display: block; }
 
+    /* 項目ごとのエラー（入力欄の真下に赤字で理由を出す） */
+    .field-error {
+      display: none;
+      color: #d32f2f;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: -10px 0 14px;
+    }
+    .field-error.active { display: block; }
+    input.invalid, select.invalid {
+      border-color: #d32f2f;
+      background: #fff5f5;
+    }
+
     .note {
       font-size: 0.8rem;
       color: #888;
@@ -564,10 +578,12 @@
       ※以下でご入力いただくメールアドレスへ週一配信
     </p>
     <input type="text" id="inputEmail" placeholder="例：example@gmail.com" inputmode="email">
+    <p class="field-error" id="errEmail"></p>
 
     <label>お名前（声タイプ別診断に記載されます） <span class="required">*必須</span></label>
     <p class="note" style="margin-top:0; margin-bottom:8px;">ハンドルネームでOK</p>
     <input type="text" id="inputName" placeholder="例：山田太郎">
+    <p class="field-error" id="errName"></p>
 
     <label>性別：音声分析で使用（診断文には非表示） <span class="required">*必須</span></label>
     <select id="inputGender">
@@ -576,18 +592,8 @@
       <option value="女性">女性</option>
       <option value="回答しない">回答しない</option>
     </select>
+    <p class="field-error" id="errGender"></p>
 
-  </div>
-
-  <button class="btn btn-submit" onclick="goSurvey()">次へ</button>
-</div>
-
-<!-- ============ 画面3: かんたんアンケート ============ -->
-<div class="container" id="surveyContainer" style="display:none;">
-  <p class="step-label">ステップ 3 / 3</p>
-  <h1>アンケート</h1>
-
-  <div class="card">
     <label>年代：診断文には非表示</label>
     <select id="inputAge">
       <option value="">選択してください</option>
@@ -613,7 +619,16 @@
       <option value="学生">学生</option>
       <option value="無回答">無回答</option>
     </select>
+
   </div>
+
+  <button class="btn btn-submit" onclick="goSurvey()">次へ</button>
+</div>
+
+<!-- ============ 画面3: かんたんアンケート ============ -->
+<div class="container" id="surveyContainer" style="display:none;">
+  <p class="step-label">ステップ 3 / 3</p>
+  <h1>アンケート</h1>
 
   <!-- どこで知りましたか -->
   <div class="card">
@@ -767,15 +782,53 @@
   function showHeroScreen() { showOnly('heroScreen'); }
   function backToContact() { showOnly('formContainer'); }
 
-  // ステップ2 → 3。ここで連絡先だけ先に検査する（最後にまとめて怒られない）
-  function goSurvey() {
+  // ステップ2 → 3。連絡先だけ先に検査し、原因を各欄の下に赤字で出す
+  function setFieldError(inputId, errId, msg) {
+    var input = document.getElementById(inputId);
+    var err = document.getElementById(errId);
+    if (msg) {
+      input.classList.add('invalid');
+      err.textContent = msg;
+      err.classList.add('active');
+    } else {
+      input.classList.remove('invalid');
+      err.textContent = '';
+      err.classList.remove('active');
+    }
+    return !msg;
+  }
+
+  function validateContact(showAll) {
     var email = document.getElementById('inputEmail').value.trim();
     var name = document.getElementById('inputName').value.trim();
     var gender = document.getElementById('inputGender').value;
-    if (!email) { showError('メールアドレスを入力してください。'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
-    if (!name) { showError('お名前を入力してください。'); return; }
-    if (!gender) { showError('性別を選択してください。'); return; }
+
+    var emailMsg = !email ? 'メールアドレスを入力してください'
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'メールアドレスの形式が正しくないようです（例：example@gmail.com）'
+      : '';
+    var nameMsg = !name ? 'お名前を入力してください' : '';
+    var genderMsg = !gender ? '性別を選択してください' : '';
+
+    var ok1 = setFieldError('inputEmail', 'errEmail', emailMsg);
+    var ok2 = setFieldError('inputName', 'errName', nameMsg);
+    var ok3 = setFieldError('inputGender', 'errGender', genderMsg);
+    return ok1 && ok2 && ok3;
+  }
+
+  // 入力し直したら、その場で赤字を消す
+  ['inputEmail', 'inputName', 'inputGender'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function() { validateContact(); });
+    el.addEventListener('change', function() { validateContact(); });
+  });
+
+  function goSurvey() {
+    if (!validateContact(true)) {
+      var firstErr = document.querySelector('.field-error.active');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     showOnly('surveyContainer');
   }
 
