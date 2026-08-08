@@ -473,6 +473,28 @@
       color: #aaa;
       line-height: 1.8;
     }
+    .step-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #E85C8A;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .src-toggle[open] > summary { margin-bottom: 4px; }
+    .src-toggle .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 10px;
+    }
+    .src-toggle .checkbox-other-text { grid-column: 1 / -1; }
+    .src-toggle > summary {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #444;
+      cursor: pointer;
+      padding: 4px 0 10px;
+    }
     #heroScreen .state { display: none; }
     #heroScreen .state.active { display: block; }
   </style>
@@ -529,7 +551,8 @@
 
 <!-- ============ 画面2: 声のあとに、かんたんな入力 ============ -->
 <div class="container" id="formContainer" style="display:none;">
-  <h1>お届け先の入力</h1>
+  <p class="step-label">ステップ 2 / 3</p>
+  <h1>結果のお届け先</h1>
 
   <!-- 音声確定済み -->
   <div class="card recorder-section">
@@ -562,6 +585,17 @@
       <option value="回答しない">回答しない</option>
     </select>
 
+  </div>
+
+  <button class="btn btn-submit" onclick="goSurvey()">次へ（あと1ページ）</button>
+</div>
+
+<!-- ============ 画面3: かんたんアンケート ============ -->
+<div class="container" id="surveyContainer" style="display:none;">
+  <p class="step-label">ステップ 3 / 3</p>
+  <h1>最後に、かんたんな質問</h1>
+
+  <div class="card">
     <label>年代：診断文には非表示</label>
     <select id="inputAge">
       <option value="">選択してください</option>
@@ -591,7 +625,8 @@
 
   <!-- どこで知りましたか -->
   <div class="card">
-    <label>どこで声タイプ別診断を知りましたか？（複数選択可） <span class="required">*必須</span></label>
+    <details class="src-toggle">
+      <summary>どこで声タイプ診断を知りましたか？（複数選択可）<span class="required">*必須</span></summary>
     <div class="checkbox-group" id="sourceGroup">
       <label><input type="checkbox" value="instagram投稿"> instagram投稿</label>
       <label><input type="checkbox" value="instagramリール"> instagramリール</label>
@@ -607,6 +642,7 @@
       <label><input type="checkbox" value="その他" id="sourceOtherCheck"> その他</label>
       <input type="text" id="sourceOtherText" class="checkbox-other-text" placeholder="その他の内容を入力">
     </div>
+    </details>
   </div>
 
   <!-- 声を使う場面 / 悩み -->
@@ -652,6 +688,7 @@
   </div>
 
   <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>送信する</button>
+  <button class="btn btn-retry" onclick="backToContact()" style="width:100%;margin-top:10px;">ひとつ前に戻る</button>
 </div>
 
 <!-- 送信中オーバーレイ -->
@@ -726,15 +763,27 @@
   }
 
   // --- 画面の切り替え（声が先・入力があと） ---
-  function showFormScreen() {
-    document.getElementById('heroScreen').style.display = 'none';
-    document.getElementById('formContainer').style.display = 'block';
+  function showOnly(id) {
+    ['heroScreen', 'formContainer', 'surveyContainer'].forEach(function(s) {
+      var el = document.getElementById(s);
+      if (el) el.style.display = (s === id) ? 'block' : 'none';
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  function showHeroScreen() {
-    document.getElementById('formContainer').style.display = 'none';
-    document.getElementById('heroScreen').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function showFormScreen() { showOnly('formContainer'); }
+  function showHeroScreen() { showOnly('heroScreen'); }
+  function backToContact() { showOnly('formContainer'); }
+
+  // ステップ2 → 3。ここで連絡先だけ先に検査する（最後にまとめて怒られない）
+  function goSurvey() {
+    var email = document.getElementById('inputEmail').value.trim();
+    var name = document.getElementById('inputName').value.trim();
+    var gender = document.getElementById('inputGender').value;
+    if (!email) { showError('メールアドレスを入力してください。'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
+    if (!name) { showError('お名前を入力してください。'); return; }
+    if (!gender) { showError('性別を選択してください。'); return; }
+    showOnly('surveyContainer');
   }
 
   // --- リセット ---
