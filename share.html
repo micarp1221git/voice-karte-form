@@ -164,7 +164,8 @@
   }
 
   // 🚨 GASのWebアプリURL。デプロイしたらここに貼る（貼るまでは手順の表示に落ちる）
-  var IG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxfw0Iafjm99Yh3XbhJo8IS460du8de-d2BhKmIkQB3pP4Vc3tjmwPmJw9tbnoh23NV/exec';
+  // 2026-08-11: GAS案は行き止まり（WorkspaceのGASは外からのPOSTを全部弾く・実測）→ Cloudflare Workerへ
+  var IG_ENDPOINT = 'https://koe-share-ig.micarp1221.workers.dev';
 
   async function toggleInsta() {
     if (!IG_ENDPOINT) {   // まだ繋がっていないあいだは、これまでどおり手順を出す
