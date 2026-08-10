@@ -686,13 +686,10 @@
     </label>
   </div>
 
-  <!-- 送信前の案内 -->
-  <div class="card" style="font-size:0.85rem; color:#666; line-height:1.8;">
-    <p>&#x1F4E2; <strong>結果は、ご入力のメールアドレスにお届けします</strong><br>
-    基本的に平日の日中にお返ししていますが、土日祝はお時間をいただく場合があります。</p>
-    <p style="margin-top:8px;"><strong>【もし届かない時は…】</strong><br>
-    迷惑メールフォルダをご確認ください。Gmailのアドレスがおすすめです。</p>
-  </div>
+  <!-- 送信前は「どこに届くか」だけ。⚠️2026-08-11みかさん: 届かないときの話は送信後のページへ移した
+       （まだ起きていない不安を、押す前に渡さない） -->
+  <p style="font-size:0.85rem; color:#666; line-height:1.8; text-align:center; margin:4px 0 14px;">
+    結果は、ご入力のメールアドレスにお届けします。</p>
 
   <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>送信する</button>
   <button class="btn btn-retry" onclick="backToContact()" style="width:100%;margin-top:10px;">ひとつ前に戻る</button>
@@ -708,8 +705,19 @@
 <div class="container success-message" id="successMessage">
   <div class="success-icon">&#10004;</div>
   <h2>送信が完了しました！</h2>
-  <p>声タイプ別診断の結果をお楽しみに。<br><br>
-  万が一、土日祝を除いて2日以上届かない場合は、<br>エラーの可能性があるため再度フォームから送信をお願いします。</p>
+  <p style="font-size:1.05rem;">声を聴かせてくださって、ありがとうございました。</p>
+
+  <div class="card" style="text-align:left; margin-top:22px; line-height:1.9;">
+    <p style="margin:0 0 10px; font-weight:700; color:#2B4BBF;">これからのこと</p>
+    <p style="margin:0 0 14px;">結果は、ご入力のメールアドレスにお届けします。<br>
+    基本的に平日の日中にお返ししていますが、土日祝はお時間をいただく場合があります。</p>
+    <p style="margin:0 0 6px; font-weight:700;">届いていないな、と思ったら</p>
+    <p style="margin:0;">まず迷惑メールフォルダをご覧ください。そこに入っていることがあります。<br>
+    土日祝を除いて2日たっても見つからないときは、お手数ですが、もう一度フォームから送ってください。</p>
+  </div>
+
+  <p style="margin-top:20px; font-size:0.95rem; color:#666;">
+    どんな声だったか、楽しみにしていてくださいね。</p>
 </div>
 
 <script>
@@ -1022,8 +1030,7 @@
       .then(function(result) {
         document.getElementById('spinnerOverlay').classList.remove('active');
         if (result.success) {
-          document.getElementById('formContainer').style.display = 'none';
-          document.getElementById('successMessage').classList.add('active');
+          finishAndShowThanks();
         } else {
           showError(result.message);
           document.getElementById('submitBtn').disabled = false;
@@ -1034,10 +1041,21 @@
         // その場合でもデータ送信自体は成功している可能性が高い
         console.log('Response parse error (data likely sent successfully):', err);
         document.getElementById('spinnerOverlay').classList.remove('active');
-        document.getElementById('formContainer').style.display = 'none';
-        document.getElementById('successMessage').classList.add('active');
+        finishAndShowThanks();
       });
     };
+
+    function finishAndShowThanks() {
+      // 🚨 2026-08-11修正: 以前は formContainer しか隠しておらず、
+      //    同意・送信ボタンのある surveyContainer が画面に残ったまま、
+      //    その下に完了メッセージが出ていた（みかさんのスクショで発覚）。
+      ['heroScreen', 'formContainer', 'surveyContainer'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      document.getElementById('successMessage').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });   // 遷移した感じにする
+    }
 
     reader.readAsDataURL(audioBlob);
   }
