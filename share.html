@@ -86,6 +86,20 @@
   <button class="btn-x"     onclick="shareX()">Xでシェアする</button>
   <button class="btn-insta" onclick="toggleInsta()">インスタにシェア</button>
 
+  <!-- 押したあとに、1つずつ出る画面（2026-08-11みかさん確定の文言）
+       ⚠️「待って」と「リポストして」を同時に言わない。上がってから初めてリポストの話を出す -->
+  <div id="insta-sending" style="display:none;">
+    <p style="font-size:15px;color:#666;margin:6px 0 14px;">送っています…</p>
+  </div>
+  <div id="insta-done" style="display:none;">
+    <p style="font-size:16px;font-weight:700;color:#2B4BBF;margin:6px 0 12px;">
+      ✅ ボイストレーナーみかのインスタに上がりました</p>
+    <a id="instaLink" href="https://www.instagram.com/micarp/" target="_blank" rel="noopener"
+       style="display:block;background:#E85C8A;color:#fff;text-decoration:none;padding:16px;border-radius:14px;font-weight:700;font-size:1.05rem;">
+      インスタで見る</a>
+    <p style="font-size:14px;color:#666;margin:10px 0 0;">ここからリポストしてね</p>
+  </div>
+
   <div id="insta-guide">
     <!-- 🚨 2026-08-11 みかさん案「わたしの投稿にUPして、リポストで使ってもらう」を、
          実際に動く順番に直したもの。⚠️Webページから他人のアカウントへ投稿することはできないので、
@@ -149,9 +163,46 @@
                 '_blank', 'noopener');
   }
 
-  function toggleInsta() {
+  // 🚨 GASのWebアプリURL。デプロイしたらここに貼る（貼るまでは手順の表示に落ちる）
+  var IG_ENDPOINT = '';
+
+  async function toggleInsta() {
+    if (!IG_ENDPOINT) {   // まだ繋がっていないあいだは、これまでどおり手順を出す
+      var g = document.getElementById('insta-guide');
+      g.style.display = (g.style.display === 'block') ? 'none' : 'block';
+      return;
+    }
+    // ⭐ 1回に1つだけ言う（2026-08-11みかさん「2つのことを一気に伝えてる」）
+    document.querySelector('.btn-insta').style.display = 'none';
+    document.getElementById('insta-sending').style.display = 'block';
+    try {
+      // ⚠️ text/plain にするのは、余計な事前確認（プリフライト）を起こさないため
+      var res = await fetch(IG_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ img: imgUrl, type: type })
+      });
+      var data = await res.json();
+      document.getElementById('insta-sending').style.display = 'none';
+      if (data.ok) {
+        if (data.permalink) document.getElementById('instaLink').href = data.permalink;
+        document.getElementById('insta-done').style.display = 'block';
+      } else {
+        showInstaFallback_(data.error);
+      }
+    } catch (e) {
+      document.getElementById('insta-sending').style.display = 'none';
+      showInstaFallback_('');
+    }
+  }
+
+  // 失敗しても行き止まりにしない。手で出せる道を出す
+  function showInstaFallback_(why) {
     var g = document.getElementById('insta-guide');
-    g.style.display = (g.style.display === 'block') ? 'none' : 'block';
+    g.style.display = 'block';
+    g.insertAdjacentHTML('afterbegin',
+      '<p style="color:#C2185B;margin:0 0 10px;">うまく送れませんでした。'
+      + 'この手順なら、いま出せます。</p>');
   }
 
   async function shareImage(btn) {
