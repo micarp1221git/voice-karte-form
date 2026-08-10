@@ -319,6 +319,20 @@
 
     .error-msg.active { display: block; }
 
+    /* 項目ごとのエラー（入力欄の真下に赤字で理由を出す） */
+    .field-error {
+      display: none;
+      color: #d32f2f;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: -10px 0 14px;
+    }
+    .field-error.active { display: block; }
+    input.invalid, select.invalid {
+      border-color: #d32f2f;
+      background: #fff5f5;
+    }
+
     .note {
       font-size: 0.8rem;
       color: #888;
@@ -473,6 +487,20 @@
       color: #aaa;
       line-height: 1.8;
     }
+    .step-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #E85C8A;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .src-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 10px;
+    }
+    .src-grid .checkbox-other-text { grid-column: 1 / -1; }
     #heroScreen .state { display: none; }
     #heroScreen .state.active { display: block; }
   </style>
@@ -529,7 +557,8 @@
 
 <!-- ============ 画面2: 声のあとに、かんたんな入力 ============ -->
 <div class="container" id="formContainer" style="display:none;">
-  <h1>お届け先の入力</h1>
+  <p class="step-label">ステップ 2 / 3</p>
+  <h1>結果のお届け先</h1>
 
   <!-- 音声確定済み -->
   <div class="card recorder-section">
@@ -544,15 +573,16 @@
   <div class="card">
     <label>メールアドレス <span class="required">*必須</span></label>
     <p class="note" style="margin-top:0; margin-bottom:8px; line-height:1.7;">
-      ☑️ メールマガジンへのご登録をお願いいたします。（不要な場合はかんたんに解除できます）<br>
-      声に役立つ内容や講座クーポンなどの情報を優先的にお届けします。<br>
-      ※以下でご入力いただくメールアドレスへ週一配信
+      診断結果を、このアドレスにお送りします。<br>
+      ※併せてメールマガジン（週1回）へのご登録をお願いいたします。不要な場合はかんたんに解除できます。
     </p>
     <input type="text" id="inputEmail" placeholder="例：example@gmail.com" inputmode="email">
+    <p class="field-error" id="errEmail"></p>
 
     <label>お名前（声タイプ別診断に記載されます） <span class="required">*必須</span></label>
     <p class="note" style="margin-top:0; margin-bottom:8px;">ハンドルネームでOK</p>
     <input type="text" id="inputName" placeholder="例：山田太郎">
+    <p class="field-error" id="errName"></p>
 
     <label>性別：音声分析で使用（診断文には非表示） <span class="required">*必須</span></label>
     <select id="inputGender">
@@ -561,6 +591,7 @@
       <option value="女性">女性</option>
       <option value="回答しない">回答しない</option>
     </select>
+    <p class="field-error" id="errGender"></p>
 
     <label>年代：診断文には非表示</label>
     <select id="inputAge">
@@ -587,12 +618,21 @@
       <option value="学生">学生</option>
       <option value="無回答">無回答</option>
     </select>
+
   </div>
+
+  <button class="btn btn-submit" onclick="goSurvey()">次へ</button>
+</div>
+
+<!-- ============ 画面3: かんたんアンケート ============ -->
+<div class="container" id="surveyContainer" style="display:none;">
+  <p class="step-label">ステップ 3 / 3</p>
+  <h1>アンケート</h1>
 
   <!-- どこで知りましたか -->
   <div class="card">
-    <label>どこで声タイプ別診断を知りましたか？（複数選択可） <span class="required">*必須</span></label>
-    <div class="checkbox-group" id="sourceGroup">
+    <label>どこで声タイプ診断を知りましたか？（複数選択可） <span class="required">*必須</span></label>
+    <div class="checkbox-group src-grid" id="sourceGroup">
       <label><input type="checkbox" value="instagram投稿"> instagram投稿</label>
       <label><input type="checkbox" value="instagramリール"> instagramリール</label>
       <label><input type="checkbox" value="instagramストーリーズ"> instagramストーリーズ</label>
@@ -609,32 +649,16 @@
     </div>
   </div>
 
-  <!-- SNS -->
-  <div class="card">
-    <label>InstagramのユーザーID</label>
-    <p class="note" style="margin-top:0; margin-bottom:8px;">&#x26A0;&#xFE0F;「名前」ではなく「ユーザー名」を書いてください。半角英数字・.・_のみ<br>正しいIDをご記入ください。入力ミスがあるとメンション通知できません。コピー＆ペーストを推奨します。</p>
-    <input type="text" id="inputInstagram" placeholder="例：@voice_mika123">
-
-    <label>XのユーザーID</label>
-    <p class="note" style="margin-top:0; margin-bottom:8px;">&#x26A0;&#xFE0F;「名前」ではなく「ユーザー名」を書いてください。半角英数字・.・_のみ<br>正しいIDをご記入ください。入力ミスがあるとメンション通知できません。コピー＆ペーストを推奨します。</p>
-    <input type="text" id="inputX" placeholder="例：@micarp">
-
-    <label>投稿時にメンションしてほしいSNS <span class="required">*必須</span></label>
-    <select id="inputMention">
-      <option value="">選択してください</option>
-      <option value="Instagram">Instagram</option>
-      <option value="X">X</option>
-      <option value="両方">両方</option>
-    </select>
-  </div>
-
   <!-- 声を使う場面 / 悩み -->
   <div class="card">
     <label>声を使う場面 <span class="required">*必須</span></label>
     <input type="text" id="inputScene" placeholder="例：接客、営業、プレゼンテーション、配信、日常会話など">
 
+  </div>
+
+  <div class="card">
     <label>今のご自分の声の悩みなどがあれば教えてください</label>
-    <p class="note" style="margin-top:0; margin-bottom:8px;">この声タイプ別診断に反映はされませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
+    <p class="note" style="margin-top:0; margin-bottom:8px;">診断結果には反映されませんが、ボイストレーナーみかの発信の参考にさせていただきます。</p>
     <textarea id="inputWorry" placeholder="自由にご記入ください"></textarea>
   </div>
 
@@ -664,14 +688,14 @@
 
   <!-- 送信前の案内 -->
   <div class="card" style="font-size:0.85rem; color:#666; line-height:1.8;">
-    <p>&#x1F4E2; <strong>回答まで時間がかかる場合があります</strong><br>
-    分析完了後、メンションにてお知らせします！<br>
-    基本的に平日の日中にお返ししていますが、土日祝は回答できない場合があります。</p>
+    <p>&#x1F4E2; <strong>結果は、ご入力のメールアドレスにお届けします</strong><br>
+    基本的に平日の日中にお返ししていますが、土日祝はお時間をいただく場合があります。</p>
     <p style="margin-top:8px;"><strong>【もし届かない時は…】</strong><br>
-    メンションエラー等かもしれません。私のタイムラインを覗いてみてください。</p>
+    迷惑メールフォルダをご確認ください。Gmailのアドレスがおすすめです。</p>
   </div>
 
   <button class="btn btn-submit" id="submitBtn" onclick="submitForm()" disabled>送信する</button>
+  <button class="btn btn-retry" onclick="backToContact()" style="width:100%;margin-top:10px;">ひとつ前に戻る</button>
 </div>
 
 <!-- 送信中オーバーレイ -->
@@ -746,15 +770,65 @@
   }
 
   // --- 画面の切り替え（声が先・入力があと） ---
-  function showFormScreen() {
-    document.getElementById('heroScreen').style.display = 'none';
-    document.getElementById('formContainer').style.display = 'block';
+  function showOnly(id) {
+    ['heroScreen', 'formContainer', 'surveyContainer'].forEach(function(s) {
+      var el = document.getElementById(s);
+      if (el) el.style.display = (s === id) ? 'block' : 'none';
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  function showHeroScreen() {
-    document.getElementById('formContainer').style.display = 'none';
-    document.getElementById('heroScreen').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function showFormScreen() { showOnly('formContainer'); }
+  function showHeroScreen() { showOnly('heroScreen'); }
+  function backToContact() { showOnly('formContainer'); }
+
+  // ステップ2 → 3。連絡先だけ先に検査し、原因を各欄の下に赤字で出す
+  function setFieldError(inputId, errId, msg) {
+    var input = document.getElementById(inputId);
+    var err = document.getElementById(errId);
+    if (msg) {
+      input.classList.add('invalid');
+      err.textContent = msg;
+      err.classList.add('active');
+    } else {
+      input.classList.remove('invalid');
+      err.textContent = '';
+      err.classList.remove('active');
+    }
+    return !msg;
+  }
+
+  function validateContact(showAll) {
+    var email = document.getElementById('inputEmail').value.trim();
+    var name = document.getElementById('inputName').value.trim();
+    var gender = document.getElementById('inputGender').value;
+
+    var emailMsg = !email ? 'メールアドレスを入力してください'
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'メールアドレスの形式が正しくないようです（例：example@gmail.com）'
+      : '';
+    var nameMsg = !name ? 'お名前を入力してください' : '';
+    var genderMsg = !gender ? '性別を選択してください' : '';
+
+    var ok1 = setFieldError('inputEmail', 'errEmail', emailMsg);
+    var ok2 = setFieldError('inputName', 'errName', nameMsg);
+    var ok3 = setFieldError('inputGender', 'errGender', genderMsg);
+    return ok1 && ok2 && ok3;
+  }
+
+  // 入力し直したら、その場で赤字を消す
+  ['inputEmail', 'inputName', 'inputGender'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function() { validateContact(); });
+    el.addEventListener('change', function() { validateContact(); });
+  });
+
+  function goSurvey() {
+    if (!validateContact(true)) {
+      var firstErr = document.querySelector('.field-error.active');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    showOnly('surveyContainer');
   }
 
   // --- リセット ---
@@ -898,7 +972,6 @@
     var gender = document.getElementById('inputGender').value;
     var consent = document.getElementById('inputConsent').checked;
     var source = getSourceValues();
-    var mention = document.getElementById('inputMention').value;
     var scene = document.getElementById('inputScene').value.trim();
 
     // バリデーション
@@ -907,8 +980,7 @@
     if (!name) { showError('お名前を入力してください。'); return; }
     if (!gender) { showError('性別を選択してください。'); return; }
     if (!source) { showError('「どこで声タイプ別診断を知りましたか？」を1つ以上選択してください。'); return; }
-    if (!mention) { showError('「投稿時にメンションしてほしいSNS」を選択してください。'); return; }
-    if (!audioBlob) { showError('音声を録音またはアップロードしてください。'); return; }
+    if (!audioBlob) { showError('音声がありません。最初の画面からやり直してください。'); return; }
     if (!scene) { showError('「声を使う場面」を入力してください。'); return; }
     if (!consent) { showError('個人情報の取り扱いについて同意してください。'); return; }
 
@@ -931,9 +1003,9 @@
         age: document.getElementById('inputAge').value,
         job: document.getElementById('inputJob').value,
         source: source,
-        instagramId: document.getElementById('inputInstagram').value.trim(),
-        xId: document.getElementById('inputX').value.trim(),
-        mention: mention,
+        instagramId: '',
+        xId: '',
+        mention: '',
         scene: scene,
         worry: document.getElementById('inputWorry').value.trim(),
         consent: '同意する'
