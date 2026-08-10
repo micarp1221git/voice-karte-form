@@ -132,6 +132,7 @@
   var params = new URLSearchParams(location.search);
   var type = (params.get('type') || '').slice(0, 10);
   var imgUrl = params.get('img') || '';
+  var userName = (params.get('name') || '').slice(0, 20);   // 結果メールのリンクに乗ってくるハンドルネーム（キャプション用）
 
   // メンション確定: @micarp（2026-08-08みかさん）
   var MENTION = '@micarp';
@@ -181,7 +182,7 @@
       var res = await fetch(IG_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ img: imgUrl, type: type })
+        body: JSON.stringify({ img: imgUrl, type: type, name: userName })
       });
       var data = await res.json();
       document.getElementById('insta-sending').style.display = 'none';
