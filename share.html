@@ -85,10 +85,8 @@
   <!-- ⭐ コピーされる文を、その場に出しておく -->
   <div class="share-text" id="shareBox" onclick="copyText(this)" role="button" tabindex="0"><span class="lbl" id="shareLbl">シェア文（タップでコピーできます）</span><span id="shareTextView"></span></div>
 
-  <button class="btn-x"     onclick="shareX()">Xでシェアする</button>
-  <p style="font-size:0.78rem;color:#999;margin:-4px 0 10px;">
-    文が入った投稿画面が開きます。画像をつけたい方は、上の画像を長押しで保存して投稿に添付してください。</p>
-  <button class="btn-insta" onclick="toggleInsta()">インスタにシェア</button>
+  <button class="btn-x"     onclick="shareVia('x', this)">Xにシェア</button>
+  <button class="btn-insta" onclick="shareVia('ig', this)">インスタにシェア</button>
 
   <!-- 押したあとに、1つずつ出る画面（2026-08-11みかさん確定の文言）
        ⚠️「待って」と「リポストして」を同時に言わない。上がってから初めてリポストの話を出す -->
@@ -96,7 +94,7 @@
     <p style="font-size:15px;color:#666;margin:6px 0 14px;">送っています…</p>
   </div>
   <div id="insta-done" style="display:none;">
-    <p style="font-size:16px;font-weight:700;color:#2B4BBF;margin:6px 0 12px;">
+    <p id="doneMsg" style="font-size:16px;font-weight:700;color:#2B4BBF;margin:6px 0 12px;">
       ✅ ボイストレーナーみかのインスタに上がりました</p>
     <a id="instaLink" href="https://www.instagram.com/micarp/" target="_blank" rel="noopener"
        style="display:block;background:#E85C8A;color:#fff;text-decoration:none;padding:16px;border-radius:14px;font-weight:700;font-size:1.05rem;">
@@ -135,6 +133,7 @@
   var type = (params.get('type') || '').slice(0, 10);
   var imgUrl = params.get('img') || '';
   var userName = (params.get('name') || '').slice(0, 20);   // 結果メールのリンクに乗ってくるハンドルネーム（キャプション用）
+  var extraImgs = (params.get('imgs') || '').slice(0, 1200);  // 分析画像のURL（|区切り・カルーセル/X複数枚用。無ければ1枚投稿）
 
   // メンション確定: @micarp（2026-08-08みかさん）
   var MENTION = '@micarp';
@@ -155,42 +154,38 @@
     el.style.display = 'block';
   }
 
-  function shareX() {
-    // Xは投稿画面を開くだけ。画像は自動で乗らないので、そのことを先に言う。
-    window.open('https://x.com/intent/post?text=' + encodeURIComponent(shareText),
-                '_blank', 'noopener');
-  }
-
   // 🚨 GASのWebアプリURL。デプロイしたらここに貼る（貼るまでは手順の表示に落ちる）
   // 2026-08-11: GAS案は行き止まり（WorkspaceのGASは外からのPOSTを全部弾く・実測）→ Cloudflare Workerへ
   var IG_ENDPOINT = 'https://koe-share-ig.micarp1221.workers.dev';
 
-  async function toggleInsta() {
-    if (!IG_ENDPOINT) {   // まだ繋がっていないあいだは、これまでどおり手順を出す
-      var g = document.getElementById('insta-guide');
-      g.style.display = (g.style.display === 'block') ? 'none' : 'block';
-      return;
-    }
+  async function shareVia(target, btn) {
     // ⭐ 1回に1つだけ言う（2026-08-11みかさん「2つのことを一気に伝えてる」）
-    document.querySelector('.btn-insta').style.display = 'none';
+    if (btn) btn.style.display = 'none';
     document.getElementById('insta-sending').style.display = 'block';
     try {
       // ⚠️ text/plain にするのは、余計な事前確認（プリフライト）を起こさないため
       var res = await fetch(IG_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ img: imgUrl, type: type, name: userName })
+        body: JSON.stringify({ img: imgUrl, type: type, name: userName, imgs: extraImgs, target: target })
       });
       var data = await res.json();
       document.getElementById('insta-sending').style.display = 'none';
       if (data.ok) {
-        if (data.permalink) document.getElementById('instaLink').href = data.permalink;
+        var isX = (target === 'x');
+        document.getElementById('doneMsg').textContent =
+          isX ? '✅ ボイストレーナーみかのXに上がりました' : '✅ ボイストレーナーみかのインスタに上がりました';
+        var a = document.getElementById('instaLink');
+        a.textContent = isX ? 'Xで見る' : 'Instagramで見る';
+        a.href = data.permalink || (isX ? 'https://x.com/micarp' : 'https://www.instagram.com/micarp/');
         document.getElementById('insta-done').style.display = 'block';
       } else {
+        if (btn) btn.style.display = 'block';
         showInstaFallback_(data.error);
       }
     } catch (e) {
       document.getElementById('insta-sending').style.display = 'none';
+      if (btn) btn.style.display = 'block';
       showInstaFallback_('');
     }
   }
