@@ -21,28 +21,6 @@
       box-shadow: 0 6px 24px rgba(232,92,138,0.2);
       margin-bottom: 20px;
     }
-    /* 何がコピーされるのかを、先に見せる（2026-08-11みかさん「どれのことなのかわからなかった」） */
-    .share-text {
-      background: #fff;
-      border: 1.5px solid #F3C6D4;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 0.92rem;
-      line-height: 1.9;
-      text-align: left;
-      color: #444;
-      margin-bottom: 10px;
-      word-break: break-all;
-      cursor: pointer;
-      white-space: pre-wrap;   /* 改行をそのまま見せる（2026-08-11みかさん「改行もちゃんとして」） */
-    }
-    .share-text .lbl {
-      display: block;
-      font-size: 0.75rem;
-      color: #999;
-      margin-bottom: 6px;
-      letter-spacing: .04em;
-    }
     button {
       display: block;
       width: 100%;
@@ -63,18 +41,6 @@
     .btn-share{ background: #fff; color: #444; border: 1.5px solid #ddd; }
     .note { margin-top: 18px; font-size: 0.8rem; color: #999; line-height: 1.9; text-align: left; }
     .note strong { color: #666; }
-    #insta-guide {
-      display: none;
-      background: #fff;
-      border: 1.5px solid #ddd;
-      border-radius: 12px;
-      padding: 14px 16px;
-      text-align: left;
-      font-size: 0.88rem;
-      line-height: 1.9;
-      margin-bottom: 10px;
-      color: #444;
-    }
   </style>
 </head>
 <body>
@@ -82,16 +48,19 @@
   <h1>診断結果をシェア</h1>
   <img class="result-img" id="resultImg" src="" alt="診断結果" style="display:none;">
 
-  <!-- ⭐ コピーされる文を、その場に出しておく -->
-  <div class="share-text" id="shareBox" onclick="copyText(this)" role="button" tabindex="0"><span class="lbl" id="shareLbl">シェア文（タップでコピーできます）</span><span id="shareTextView"></span></div>
 
   <button class="btn-x"     onclick="shareVia('x', this)">Xにシェア</button>
   <button class="btn-insta" onclick="shareVia('ig', this)">インスタにシェア</button>
 
   <!-- 押したあとに、1つずつ出る画面（2026-08-11みかさん確定の文言）
        ⚠️「待って」と「リポストして」を同時に言わない。上がってから初めてリポストの話を出す -->
+  <div id="retryBox" style="display:none;">
+    <p style="font-size:14px;color:#C2185B;margin:4px 0 10px;">うまく送れませんでした。少し待って、もう一度押してみてください。</p>
+  </div>
+
   <div id="insta-sending" style="display:none;">
-    <p style="font-size:15px;color:#666;margin:6px 0 14px;">送っています…</p>
+    <p style="font-size:15px;color:#666;margin:6px 0 6px;">送っています…</p>
+    <p style="font-size:12.5px;color:#999;margin:0 0 14px;">画面はこのままで待っててね。たいてい30秒ほど、長いと1分くらいかかります。</p>
   </div>
   <div id="insta-done" style="display:none;">
     <p id="doneMsg" style="font-size:16px;font-weight:700;color:#2B4BBF;margin:6px 0 12px;">
@@ -102,23 +71,7 @@
     <p style="font-size:14px;color:#666;margin:10px 0 0;">ここからリポストしてね</p>
   </div>
 
-  <div id="insta-guide">
-    <!-- 🚨 2026-08-11 みかさん案「わたしの投稿にUPして、リポストで使ってもらう」を、
-         実際に動く順番に直したもの。⚠️Webページから他人のアカウントへ投稿することはできないので、
-         「先にご本人が出す → みかさんが拾う」の向きにしてある。狙い（みかさんのタイムラインに乗る）は同じ。 -->
-    ① 上の画像を<strong>長押しして保存</strong><br>
-    ② 上のシェア文をタップしてコピー<br>
-    ③ ストーリーズに画像を貼って、コピーした文（<strong>@micarp</strong> が入っています）を貼り付け<br>
-    <br>
-    ⭐ <strong>@micarp が入っていると、みかさんに通知が届きます。</strong><br>
-    みかさんのストーリーズで<strong>リポスト</strong>させてもらうので、そのまま使ってくださいね。
-  </div>
 
-
-  <p class="note">
-    <strong>うまくいかないときは。</strong><br>
-    画像を長押しで保存して、コピーした文と一緒に投稿してください。それでちゃんと届きます。
-  </p>
 </div>
 
 <script>
@@ -130,7 +83,7 @@
   //   ② X も Instagram も無い → **Xは投稿画面を直接開く／Instagramは手順を出す**
   //   ③「シェアする」がPCでは黙ってコピーに化けていた → **スマホでだけ出す**ようにした
   var params = new URLSearchParams(location.search);
-  var type = (params.get('type') || '').slice(0, 10);
+  var type = (params.get('type') || '').slice(0, 40);
   var imgUrl = params.get('img') || '';
   var userName = (params.get('name') || '').slice(0, 20);   // 結果メールのリンクに乗ってくるハンドルネーム（キャプション用）
   var extraImgs = (params.get('imgs') || '').slice(0, 1200);  // 分析画像のURL（|区切り・カルーセル/X複数枚用。無ければ1枚投稿）
@@ -138,15 +91,7 @@
   // メンション確定: @micarp（2026-08-08みかさん）
   var MENTION = '@micarp';
   var FORM_URL = 'https://micarp1221git.github.io/voice-karte-form/';
-  // 🚨 2026-08-11 みかさん指定（改行の位置まで指定どおり）
-  var shareText =
-    'あなたは、もうやった？\n' +
-    '\n' +
-    (type ? 'わたしの声は「' + type + 'タイプ」でした！\n' : '') +
-    '声タイプ診断\n' +
-    MENTION + ' #声タイプ診断 ' + FORM_URL;
 
-  document.getElementById('shareTextView').textContent = shareText;
 
   if (imgUrl) {
     var el = document.getElementById('resultImg');
@@ -160,7 +105,9 @@
 
   async function shareVia(target, btn) {
     // ⭐ 1回に1つだけ言う（2026-08-11みかさん「2つのことを一気に伝えてる」）
-    if (btn) btn.style.display = 'none';
+    document.querySelector('.btn-x').style.display = 'none';
+    document.querySelector('.btn-insta').style.display = 'none';
+    var rb = document.getElementById('retryBox'); if (rb) rb.style.display = 'none';
     document.getElementById('insta-sending').style.display = 'block';
     try {
       // ⚠️ text/plain にするのは、余計な事前確認（プリフライト）を起こさないため
@@ -177,38 +124,26 @@
           isX ? '✅ ボイストレーナーみかのXに上がりました' : '✅ ボイストレーナーみかのインスタに上がりました';
         var a = document.getElementById('instaLink');
         a.textContent = isX ? 'Xで見る' : 'Instagramで見る';
+        a.style.background = isX ? '#000' : '#E85C8A';   // X=黒・Instagram=ピンク（2026-08-11みかさん）
         a.href = data.permalink || (isX ? 'https://x.com/micarp' : 'https://www.instagram.com/micarp/');
         document.getElementById('insta-done').style.display = 'block';
       } else {
-        if (btn) btn.style.display = 'block';
-        showInstaFallback_(data.error);
+        showRetry_();
       }
     } catch (e) {
       document.getElementById('insta-sending').style.display = 'none';
-      if (btn) btn.style.display = 'block';
-      showInstaFallback_('');
+      showRetry_();
     }
   }
 
-  // 失敗しても行き止まりにしない。手で出せる道を出す
-  function showInstaFallback_(why) {
-    var g = document.getElementById('insta-guide');
-    g.style.display = 'block';
-    g.insertAdjacentHTML('afterbegin',
-      '<p style="color:#C2185B;margin:0 0 10px;">うまく送れませんでした。'
-      + 'この手順なら、いま出せます。</p>');
+  // 失敗したら、静かに元に戻して「もう一度」を出すだけ（2026-08-11みかさん「再度挑戦とかでなんとかならないの？」）
+  function showRetry_() {
+    var box = document.getElementById('retryBox');
+    box.style.display = 'block';
+    document.querySelector('.btn-x').style.display = 'block';
+    document.querySelector('.btn-insta').style.display = 'block';
   }
 
-  function copyText(el) {
-    navigator.clipboard.writeText(shareText).then(function() {
-      // 枠をタップされたときは、中の文を消さずにラベルだけ変える（2026-08-11）
-      var target = (el && el.id === 'shareBox') ? document.getElementById('shareLbl') : el;
-      if (!target) return;
-      var old = target.textContent;
-      target.textContent = 'コピーしました';
-      setTimeout(function(){ target.textContent = old; }, 1500);
-    });
-  }
 </script>
 </body>
 </html>
