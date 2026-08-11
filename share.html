@@ -86,6 +86,8 @@
   <div class="share-text" id="shareBox" onclick="copyText(this)" role="button" tabindex="0"><span class="lbl" id="shareLbl">シェア文（タップでコピーできます）</span><span id="shareTextView"></span></div>
 
   <button class="btn-x"     onclick="shareX()">Xでシェアする</button>
+  <p style="font-size:0.78rem;color:#999;margin:-4px 0 10px;">
+    文が入った投稿画面が開きます。画像をつけたい方は、上の画像を長押しで保存して投稿に添付してください。</p>
   <button class="btn-insta" onclick="toggleInsta()">インスタにシェア</button>
 
   <!-- 押したあとに、1つずつ出る画面（2026-08-11みかさん確定の文言）
@@ -114,7 +116,6 @@
     みかさんのストーリーズで<strong>リポスト</strong>させてもらうので、そのまま使ってくださいね。
   </div>
 
-  <button class="btn-share" id="btnShare" onclick="shareImage(this)" style="display:none;">画像つきでシェア（スマホのみ対応）</button>
 
   <p class="note">
     <strong>うまくいかないときは。</strong><br>
@@ -152,11 +153,6 @@
     var el = document.getElementById('resultImg');
     el.src = imgUrl;
     el.style.display = 'block';
-  }
-
-  // 画像つきのOSシェアが本当に使える端末でだけボタンを出す（PCで空振りさせない）
-  if (navigator.share) {
-    document.getElementById('btnShare').style.display = 'block';
   }
 
   function shareX() {
@@ -206,22 +202,6 @@
     g.insertAdjacentHTML('afterbegin',
       '<p style="color:#C2185B;margin:0 0 10px;">うまく送れませんでした。'
       + 'この手順なら、いま出せます。</p>');
-  }
-
-  async function shareImage(btn) {
-    try {
-      if (imgUrl && navigator.canShare) {
-        var res = await fetch(imgUrl);
-        var blob = await res.blob();
-        var file = new File([blob], 'koe-type.png', { type: blob.type || 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text: shareText });
-          return;
-        }
-      }
-      if (navigator.share) { await navigator.share({ text: shareText }); return; }
-      copyText(btn);
-    } catch (e) { /* キャンセルは無視 */ }
   }
 
   function copyText(el) {
