@@ -66,7 +66,7 @@
   <div id="insta-done" style="display:none;">
     <p id="doneMsg" style="font-size:16px;font-weight:700;color:#2B4BBF;margin:6px 0 12px;">
       ✅ ボイストレーナーみかのインスタに上がりました</p>
-    <a id="instaLink" href="https://www.instagram.com/micarp/" target="_blank" rel="noopener"
+    <a id="instaLink" href="https://www.instagram.com/voice_mika/" target="_blank" rel="noopener"
        style="display:block;background:#E85C8A;color:#fff;text-decoration:none;padding:16px;border-radius:14px;font-weight:700;font-size:1.05rem;">
       Instagramで見る</a>
     <p style="font-size:16px;font-weight:800;color:#C2185B;margin:12px 0 0;">👆 ここからリポストしてね</p>
@@ -89,8 +89,7 @@
   var userName = (params.get('name') || '').slice(0, 20);   // 結果メールのリンクに乗ってくるハンドルネーム（キャプション用）
   var extraImgs = (params.get('imgs') || '').slice(0, 1200);  // 分析画像のURL（|区切り・カルーセル/X複数枚用。無ければ1枚投稿）
 
-  // メンション確定: @micarp（2026-08-08みかさん）
-  var MENTION = '@micarp';
+  // インスタは @voice_mika（2026-08-12みかさん訂正・@micarpはX）
   var FORM_URL = 'https://micarp1221git.github.io/voice-karte-form/';
 
 
@@ -134,7 +133,7 @@
         var a = document.getElementById('instaLink');
         a.textContent = isX ? 'Xで見る' : 'Instagramで見る';
         a.style.background = isX ? '#000' : '#E85C8A';   // X=黒・Instagram=ピンク（2026-08-11みかさん）
-        a.href = data.permalink || (isX ? 'https://x.com/micarp' : 'https://www.instagram.com/micarp/');
+        a.href = data.permalink || (isX ? 'https://x.com/micarp' : 'https://www.instagram.com/voice_mika/');
         // どちらのボタンも残す（2026-08-12みかさん「Xもあげたいなーと思うかも」）
         [bx, bi].forEach(function (b) {
           if (b.dataset.label) b.textContent = b.dataset.label;
