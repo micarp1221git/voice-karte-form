@@ -55,7 +55,7 @@
   <!-- 押したあとに、1つずつ出る画面（2026-08-11みかさん確定の文言）
        ⚠️「待って」と「リポストして」を同時に言わない。上がってから初めてリポストの話を出す -->
   <div id="retryBox" style="display:none;">
-    <p style="font-size:14px;color:#C2185B;margin:4px 0 10px;">うまく送れませんでした。少し待って、もう一度押してみてください。</p>
+    <p id="retryMsg" style="font-size:14px;color:#C2185B;margin:4px 0 10px;">うまく送れませんでした。少し待って、もう一度押してみてください。</p>
   </div>
 
   <div id="insta-sending" style="display:none;">
@@ -104,9 +104,16 @@
   var IG_ENDPOINT = 'https://koe-share-ig.micarp1221.workers.dev';
 
   async function shareVia(target, btn) {
-    // ⭐ 1回に1つだけ言う（2026-08-11みかさん「2つのことを一気に伝えてる」）
-    document.querySelector('.btn-x').style.display = 'none';
-    document.querySelector('.btn-insta').style.display = 'none';
+    // ⭐ ボタンは消さない（2026-08-12みかさん「消えるとソワソワする」）
+    //    押した方＝「送っています…」表示・もう片方＝薄くして待機。両方押せない状態に
+    var bx = document.querySelector('.btn-x'), bi = document.querySelector('.btn-insta');
+    var pressed = (target === 'x') ? bx : bi;
+    var other = (target === 'x') ? bi : bx;
+    pressed.dataset.label = pressed.dataset.label || pressed.textContent;
+    other.dataset.label = other.dataset.label || other.textContent;
+    pressed.textContent = '送っています…';
+    pressed.disabled = true; other.disabled = true;
+    other.style.opacity = '0.35';
     var rb = document.getElementById('retryBox'); if (rb) rb.style.display = 'none';
     document.getElementById('insta-sending').style.display = 'block';
     try {
@@ -120,15 +127,17 @@
       document.getElementById('insta-sending').style.display = 'none';
       if (data.ok) {
         var isX = (target === 'x');
-        document.getElementById('doneMsg').textContent =
-          isX ? '✅ ボイストレーナーみかのXに上がりました' : '✅ ボイストレーナーみかのインスタに上がりました';
+        document.getElementById('doneMsg').textContent = data.already
+          ? (isX ? '✅ この結果は、もうXに上がっています' : '✅ この結果は、もうインスタに上がっています')
+          : (isX ? '✅ ボイストレーナーみかのXに上がりました' : '✅ ボイストレーナーみかのインスタに上がりました');
         var a = document.getElementById('instaLink');
         a.textContent = isX ? 'Xで見る' : 'Instagramで見る';
         a.style.background = isX ? '#000' : '#E85C8A';   // X=黒・Instagram=ピンク（2026-08-11みかさん）
         a.href = data.permalink || (isX ? 'https://x.com/micarp' : 'https://www.instagram.com/micarp/');
+        bx.style.display = 'none'; bi.style.display = 'none';
         document.getElementById('insta-done').style.display = 'block';
       } else {
-        showRetry_();
+        showRetry_(data && data.error);
       }
     } catch (e) {
       document.getElementById('insta-sending').style.display = 'none';
@@ -136,12 +145,17 @@
     }
   }
 
-  // 失敗したら、静かに元に戻して「もう一度」を出すだけ（2026-08-11みかさん「再度挑戦とかでなんとかならないの？」）
-  function showRetry_() {
+  // 失敗したら、ボタンを押せる状態に戻して理由を1行出す（理由が来なければ「もう一度」だけ）
+  function showRetry_(reason) {
     var box = document.getElementById('retryBox');
+    document.getElementById('retryMsg').textContent =
+      reason || 'うまく送れませんでした。少し待って、もう一度押してみてください。';
     box.style.display = 'block';
-    document.querySelector('.btn-x').style.display = 'block';
-    document.querySelector('.btn-insta').style.display = 'block';
+    var bx = document.querySelector('.btn-x'), bi = document.querySelector('.btn-insta');
+    [bx, bi].forEach(function (b) {
+      if (b.dataset.label) b.textContent = b.dataset.label;
+      b.disabled = false; b.style.opacity = '1'; b.style.display = 'block';
+    });
   }
 
 </script>
