@@ -627,12 +627,6 @@
 
   </div>
 
-  <div class="form-group" style="margin-top:14px;">
-    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:normal;cursor:pointer;">
-      <input type="checkbox" id="inputVoicyOk" style="margin-top:4px;">
-      <span>わたしの声の分析を、Voicyの配信で紹介してもかまいません（任意・名前は出しません）</span>
-    </label>
-  </div>
   <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">この内容で提出する</button>
 </div>
 
@@ -1018,7 +1012,6 @@
         gender: gender,
         age: document.getElementById('inputAge').value,
         kind: 'ningen-dock',   // 🆕どちらの提出かを受け口で見分けるための印
-        voicyOk: document.getElementById('inputVoicyOk') && document.getElementById('inputVoicyOk').checked ? 'OK' : '',
         instagramId: '',
         xId: '',
         mention: ''
