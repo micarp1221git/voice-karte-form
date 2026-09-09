@@ -546,19 +546,22 @@
     <p class="hero-sub">下の文を読んで、送ってください。</p>
 
     <!-- 初期状態: 大きなボタン1つ -->
-    <div id="stateIdle" class="state active">
+        <div id="stateIdle" class="state active">
+      <p class="script-head">📄 録音用の台本</p>
+      <p class="script-note">あえて少し言いにくい言葉を入れています。<br><strong>言い間違えても、噛んでも、そのままで大丈夫です。</strong></p>
+      <div class="dock-script">
+        <p>おはようございます。今日もよろしくお願いします。</p>
+        <p>では、さっそく始めます。<br>本日のデータは三種類、パソコンの画面でも共有しています。</p>
+        <p>先週いただいたご質問について、順番に確認しながら進めていきますので、<br>気になるところがあれば、途中でも遠慮なく声をかけてください。</p>
+        <p>新規事業の進捗状況を、四半期ごとにまとめました。</p>
+        <p>以上です。ありがとうございました。</p>
+      </div>
       <button class="hero-mic" onclick="startRecording()">
         <span class="hero-mic-icon">🎙</span>
         <span class="hero-mic-label">録音<br>開始</span>
       </button>
-      <p class="hero-hint">ボタンを押すと、読む文が出ます。そのまま読んでください。<br>
+      <p class="hero-hint">ボタンを押すと、すぐに録音が始まります。上の文をそのまま読んでください。<br>
       <span class="hero-hint-sub">（40秒ほどです・途中で止められます）</span></p>
-
-      <div class="hero-upload">
-        <a href="#" onclick="document.getElementById('fileInput').click(); return false;">すでに録ってある音声を使う</a>
-        <input type="file" id="fileInput" accept="audio/*,.m4a,.mp3,.wav,.webm,.mp4,.ogg" onchange="onFileSelected(this)" style="display:none;">
-        <div id="uploadFilename" class="upload-filename"></div>
-      </div>
 
       <p class="hero-note">まわりの音が大きいと、聞き取りの精度が下がります。<br>マイクは30センチほど離してください。<br><strong>上手に読もうとしないでください。</strong>仕事で話しているときの調子で大丈夫です。</p>
     </div>
@@ -740,7 +743,8 @@
   <div class="success-icon">&#10004;</div>
   <h2>提出が完了しました</h2>
   <p>録音を受け取りました。ありがとうございます。<br>10月末までに、分析結果レポートをお届けします。<br><br>
-  受け取りのメールを、ご入力のアドレスにお送りしました。<br>届いていないときは、迷惑メールフォルダをご確認ください。<br><br>
+  受け取りのメールを、ご入力のアドレスにお送りしました。<br>
+  届いていないときは、迷惑メールフォルダをご確認ください。<br><br>
   <strong>このページは閉じていただいて大丈夫です。</strong></p>
   <p style="margin-top:14px;">ボイストレーナーみか</p>
 </div>
@@ -874,8 +878,9 @@
   function resetAudio() {
     audioBlob = null;
     audioChunks = [];
-    document.getElementById('fileInput').value = '';
-    document.getElementById('uploadFilename').textContent = '';
+    // 2026-09-09: 「すでに録ってある音声を使う」を外したので、要素が無くても落ちないようにする
+    var fi = document.getElementById('fileInput'); if (fi) fi.value = '';
+    var uf = document.getElementById('uploadFilename'); if (uf) uf.textContent = '';
     updateSubmitButton();
     setState('stateIdle');
     showHeroScreen();
