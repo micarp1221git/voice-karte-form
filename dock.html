@@ -651,6 +651,16 @@
       <option value="80代以上">80代以上</option>
     </select>
 
+    <!-- 🆕2026-09-10 みかさん「どこ経由でこの人間ドックを申し込んだか、のチェックを作って」
+         優先のご案内があったことを、一般受付の方にも知ってもらう狙いも兼ねる -->
+    <label>どこ経由でお申し込みされましたか？ <span class="required">*必須</span></label>
+    <div class="checkbox-group" id="routeGroup">
+      <label><input type="checkbox" value="Voicyプレミアムリスナー"> Voicyプレミアムリスナー</label>
+      <label><input type="checkbox" value="noteメンバーシップ"> noteメンバーシップ</label>
+      <label><input type="checkbox" value="事前登録の優先案内"> 事前登録の優先案内</label>
+      <label><input type="checkbox" value="一般受付"> 一般受付</label>
+    </div>
+    <p class="field-error" id="errRoute"></p>
 
   </div>
 
@@ -1008,6 +1018,25 @@
     return values.join(', ');
   }
 
+  // 🆕2026-09-10 どこ経由の申し込みか（複数該当する方がいるのでチェックボックス）
+  function collectRoute() {
+    var boxes = document.querySelectorAll('#routeGroup input[type="checkbox"]');
+    var out = [];
+    for (var i = 0; i < boxes.length; i++) { if (boxes[i].checked) out.push(boxes[i].value); }
+    return out.join('／');
+  }
+
+  // 選び直したら、その場で赤字を消す
+  (function () {
+    var boxes = document.querySelectorAll('#routeGroup input[type="checkbox"]');
+    for (var i = 0; i < boxes.length; i++) {
+      boxes[i].addEventListener('change', function () {
+        var er = document.getElementById('errRoute');
+        if (er && collectRoute()) { er.textContent = ''; er.classList.remove('active'); }
+      });
+    }
+  })();
+
   // ============================================================
   // フォーム送信（fetch で GAS の doPost にPOST）
   // ============================================================
@@ -1019,6 +1048,7 @@
     var email = document.getElementById('inputEmail').value.trim();
     var name = document.getElementById('inputName').value.trim();
     var gender = document.getElementById('inputGender').value;
+    var route = collectRoute();
 
     // 🆕2026-09-09 みかさん「送信中のまま同じページで止まっている」
     //   実際には送信できていた（受け取りメールが届いた）が、完了画面が画面の外にあって見えていなかった。
@@ -1034,6 +1064,12 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
     if (!name) { showError('お名前を入力してください。'); return; }
     if (!gender) { showError('性別を選択してください。'); return; }
+    if (!route) {
+      var er = document.getElementById('errRoute');
+      if (er) { er.textContent = 'どこ経由でお申し込みされたかを選んでください'; er.classList.add('active'); er.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      showError('どこ経由でお申し込みされたかを選んでください。');
+      return;
+    }
     if (!audioBlob) { showError('音声がありません。最初の画面からやり直してください。'); return; }
 
     // 送信中表示。🆕2026-09-09: 音声は数MBあるので20〜60秒かかることがある。
@@ -1059,6 +1095,7 @@
         name: name,
         gender: gender,
         age: document.getElementById('inputAge').value,
+        route: route,          // 🆕2026-09-10 どこ経由で申し込んだか
         kind: 'ningen-dock',   // 🆕どちらの提出かを受け口で見分けるための印
         instagramId: '',
         xId: '',
