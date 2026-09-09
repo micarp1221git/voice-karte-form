@@ -490,12 +490,22 @@
     /* 🆕2026-09-04: 録音中に読む課題文。スマホで腕を伸ばしても読める大きさ・ブロック間を広く */
     .dock-script {
       text-align: left; margin: 18px auto; max-width: 560px;
-      font-size: 1.06rem; line-height: 2.0; color: #3D353523E;
+      font-size: 1.06rem; line-height: 2.0; color: #3D3535; /* 2026-09-09: #3D353523E は不正な色指定だったので直した */
       background: #fff; border-radius: 14px; padding: 20px 22px;
       box-shadow: 0 2px 12px rgba(0,0,0,.06);
     }
     .dock-script p { margin: 0 0 18px; }
     .dock-script p:last-child { margin-bottom: 0; }
+    /* 🆕2026-09-09 みかさん: 「あれを読むんだ」が分かるように、台本に見出しと注意書きを付ける */
+    .script-head {
+      max-width: 560px; margin: 16px auto 0; text-align: left;
+      font-size: 0.92rem; font-weight: 800; color: #E8815B; letter-spacing: .04em;
+    }
+    .script-note {
+      max-width: 560px; margin: 4px auto 0; text-align: left;
+      font-size: 0.82rem; line-height: 1.75; color: #6D6462;
+    }
+    .script-note strong { color: #3D3535; }
     .step-label {
       text-align: center;
       font-size: 0.8rem;
@@ -521,6 +531,7 @@
   <div id="errorMsg" class="error-msg"></div>
 
   <div class="hero">
+    <p class="step-label">ステップ 1 / 3</p>
     <h1 class="hero-title">声の人間ドック<br>録音の提出</h1>
     <p class="hero-sub">下の文を読んで、送ってください。</p>
 
@@ -549,6 +560,9 @@
         読み終わったら、終了を押してください
       </div>
       <!-- 🆕2026-09-04: 人間ドックは課題文を読みながら録る。診断（自由に話す）と違い、ここに文が要る -->
+      <!-- 🆕2026-09-09 みかさん: 急に文が出ても「これを読むのか」が分からない。見出しと、噛んでいい理由を添える -->
+      <p class="script-head">📄 録音用の台本</p>
+      <p class="script-note">（あえて少し言いにくい言葉を入れています。<strong>言い間違えても、噛んでも、そのままで大丈夫です。</strong>録り直さなくて構いません）</p>
       <div class="dock-script">
         <p>おはようございます。今日もよろしくお願いします。</p>
         <p>では、さっそく始めます。<br>本日のデータは三種類、パソコンの画面でも共有しています。</p>
@@ -575,7 +589,7 @@
 
 <!-- ============ 画面2: 声のあとに、かんたんな入力 ============ -->
 <div class="container" id="formContainer" style="display:none;">
-  <p class="step-label">ステップ 2 / 2</p>
+  <p class="step-label">ステップ 2 / 3</p>
   <h1>レポートのお届け先</h1>
 
   <!-- 音声確定済み -->
@@ -712,10 +726,12 @@
 
 <!-- 完了メッセージ -->
 <div class="container success-message" id="successMessage">
+  <p class="step-label">ステップ 3 / 3</p>
   <div class="success-icon">&#10004;</div>
-  <h2>録音を受け取りました</h2>
-  <p>ありがとうございます。<br>10月末までに、分析結果レポートをお届けします。<br><br>
-  受け取りのメールを、ご入力のアドレスにお送りしました。<br>届いていないときは、迷惑メールフォルダをご確認ください。</p>
+  <h2>提出が完了しました</h2>
+  <p>録音を受け取りました。ありがとうございます。<br>10月末までに、分析結果レポートをお届けします。<br><br>
+  受け取りのメールを、ご入力のアドレスにお送りしました。<br>届いていないときは、迷惑メールフォルダをご確認ください。<br><br>
+  <strong>このページは閉じていただいて大丈夫です。</strong></p>
   <p style="margin-top:14px;">ボイストレーナーみか</p>
 </div>
 
@@ -987,6 +1003,15 @@
     var name = document.getElementById('inputName').value.trim();
     var gender = document.getElementById('inputGender').value;
 
+    // 🆕2026-09-09 みかさん「送信中のまま同じページで止まっている」
+    //   実際には送信できていた（受け取りメールが届いた）が、完了画面が画面の外にあって見えていなかった。
+    //   完了画面を出したら必ず一番上まで戻す。あわせてタイトルも変える（タブでも分かるように）
+    function showSuccess() {
+      document.getElementById('successMessage').classList.add('active');
+      window.scrollTo(0, 0);
+      document.title = '提出が完了しました｜声の人間ドック';
+    }
+
     // バリデーション
     if (!email) { showError('メールアドレスを入力してください。'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('メールアドレスの形式が正しくありません。'); return; }
@@ -994,9 +1019,15 @@
     if (!gender) { showError('性別を選択してください。'); return; }
     if (!audioBlob) { showError('音声がありません。最初の画面からやり直してください。'); return; }
 
-    // 送信中表示
+    // 送信中表示。🆕2026-09-09: 音声は数MBあるので20〜60秒かかることがある。
+    //   何も出ないと「止まった」に見えるので、待ち時間の目安と、20秒たったら追いの一言を出す
     document.getElementById('spinnerOverlay').classList.add('active');
     document.getElementById('submitBtn').disabled = true;
+    var st = document.querySelector('.spinner-text');
+    if (st) st.innerHTML = '送信中です…<br><span style="font-size:.86rem;font-weight:500;">音声を送っています。30秒ほどかかることがあります。<br>このまま閉じずにお待ちください。</span>';
+    var slowTimer = setTimeout(function () {
+      if (st) st.innerHTML = 'まだ送っています…<br><span style="font-size:.86rem;font-weight:500;">音声が大きいと時間がかかります。<br>もう少しだけお待ちください。</span>';
+    }, 20000);
 
     // 音声をbase64に変換
     var reader = new FileReader();
@@ -1026,10 +1057,10 @@
       })
       .then(function(response) { return response.json(); })
       .then(function(result) {
-        document.getElementById('spinnerOverlay').classList.remove('active');
+        clearTimeout(slowTimer); document.getElementById('spinnerOverlay').classList.remove('active');
         if (result.success) {
           document.getElementById('formContainer').style.display = 'none';
-          document.getElementById('successMessage').classList.add('active');
+          showSuccess();
         } else {
           showError(result.message);
           document.getElementById('submitBtn').disabled = false;
@@ -1039,9 +1070,9 @@
         // GAS は POST 後にリダイレクトするため、CORS でレスポンスが読めない場合がある
         // その場合でもデータ送信自体は成功している可能性が高い
         console.log('Response parse error (data likely sent successfully):', err);
-        document.getElementById('spinnerOverlay').classList.remove('active');
+        clearTimeout(slowTimer); document.getElementById('spinnerOverlay').classList.remove('active');
         document.getElementById('formContainer').style.display = 'none';
-        document.getElementById('successMessage').classList.add('active');
+        showSuccess();
       });
     };
 
