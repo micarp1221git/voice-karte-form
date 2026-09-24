@@ -767,7 +767,7 @@
   //   診断と同じ受け口に送ると**どちらの提出か分からなくなる**ので、空にして送信を止めてある。
   //   GASを新設したら、ここにそのURLを入れる（それだけで動く）。
   var GAS_URL = 'https://script.google.com/macros/s/AKfycbzelUSgmUzxitKZ6qH5AEkKyY3b0DbWAMtcRKKDL-KeVyHrNKfONVfSxkKV2W9oAOGpkg/exec';
-  var API_TOKEN = 'voicekarte2026secret';
+  // 9/24: 合言葉（API_TOKEN）は外した。受け口は「購入者のメールアドレス」で照合する（ページに書いた合言葉は誰でも読めるので鍵にならない）
   var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   // --- 録音関連の変数 ---
@@ -1088,7 +1088,6 @@
       var base64 = reader.result.split(',')[1];
 
       var payload = {
-        token: API_TOKEN,
         audioData: base64,
         mimeType: audioMimeType.split(';')[0],
         email: email,
