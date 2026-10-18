@@ -12,570 +12,197 @@
   <meta name="twitter:title" content="あなたの声、なにタイプ？｜声タイプ別診断">
   <meta name="twitter:description" content="ボタンを押して話すだけ。プロの耳があなたの声の魅力とタイプをみつけます。">
   <style>
+    :root {
+      --ink: #24358F;
+      --paper: #FFF8F1;
+      --white: #FFFFFF;
+      --coral: #F0708F;
+      --salmon: #FBA48C;
+      --peach: #FDD3C2;
+      --record-size: 180px;
+      --display: 'Hiragino Maru Gothic ProN', 'Hiragino Sans', sans-serif;
+      --body: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      --sketch-line: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%2010%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M3%206%20C52%203%2092%208%20141%205%20S219%207%20265%204%20S345%207%20397%203%22%20fill%3D%22none%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+      --soft-line: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%2010%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M3%206%20C52%203%2092%208%20141%205%20S219%207%20265%204%20S345%207%20397%203%22%20fill%3D%22none%22%20stroke%3D%22%23FDD3C2%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+      --sketch-circle: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cpath%20d%3D%22M98%207%20C122%204%20146%2015%20164%2032%20C181%2049%20193%2074%20191%2098%20C194%20124%20180%20151%20163%20168%20C145%20187%20119%20194%2095%20192%20C68%20194%2043%20180%2027%20161%20C10%20143%205%20120%208%2096%20C6%2071%2018%2045%2037%2029%20C54%2013%2076%205%2098%207%20Z%22%20fill%3D%22%23F0708F%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q57%2010%2083%209%20M173%20155%20Q158%20180%20132%20187%22%20fill%3D%22none%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+      --count-circle: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cpath%20d%3D%22M98%207%20C122%204%20146%2015%20164%2032%20C181%2049%20193%2074%20191%2098%20C194%20124%20180%20151%20163%20168%20C145%20187%20119%20194%2095%20192%20C68%20194%2043%20180%2027%20161%20C10%20143%205%20120%208%2096%20C6%2071%2018%2045%2037%2029%20C54%2013%2076%205%2098%207%20Z%22%20fill%3D%22%23FFF8F1%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q57%2010%2083%209%20M173%20155%20Q158%20180%20132%20187%22%20fill%3D%22none%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+      --stop-circle: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cpath%20d%3D%22M98%207%20C122%204%20146%2015%20164%2032%20C181%2049%20193%2074%20191%2098%20C194%20124%20180%20151%20163%20168%20C145%20187%20119%20194%2095%20192%20C68%20194%2043%20180%2027%20161%20C10%20143%205%20120%208%2096%20C6%2071%2018%2045%2037%2029%20C54%2013%2076%205%2098%207%20Z%22%20fill%3D%22%2324358F%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q57%2010%2083%209%20M173%20155%20Q158%20180%20132%20187%22%20fill%3D%22none%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+      --level-circle: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cpath%20d%3D%22M98%207%20C122%204%20146%2015%20164%2032%20C181%2049%20193%2074%20191%2098%20C194%20124%20180%20151%20163%20168%20C145%20187%20119%20194%2095%20192%20C68%20194%2043%20180%2027%20161%20C10%20143%205%20120%208%2096%20C6%2071%2018%2045%2037%2029%20C54%2013%2076%205%2098%207%20Z%22%20fill%3D%22%23FDD3C2%22%20stroke%3D%22%23F0708F%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q57%2010%2083%209%20M173%20155%20Q158%20180%20132%20187%22%20fill%3D%22none%22%20stroke%3D%22%23F0708F%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
-      background: #FFF8F1;
-      background-image: radial-gradient(circle at 0% 0%, #FDD3C2 0, rgba(253,211,194,0) 220px), radial-gradient(circle at 100% 100%, #FDD3C2 0, rgba(253,211,194,0) 260px);
-      background-attachment: fixed;
-      color: #333;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 520px;
-      margin: 24px auto;
-      padding: 0 16px;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 1.4rem;
-      margin-bottom: 24px;
-      color: #24358F;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
-    }
-
-    .intro {
-      font-size: 0.9rem;
-      color: #555;
-      line-height: 1.9;
-    }
-
-    .intro h3 {
-      font-size: 0.95rem;
-      margin-top: 12px;
-      margin-bottom: 4px;
-      color: #333;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      color: #444;
-    }
-
-    label .required {
-      color: #e53935;
-      margin-left: 4px;
-      font-size: 0.8rem;
-    }
-
-    input[type="text"], select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-bottom: 16px;
-      appearance: none;
-      -webkit-appearance: none;
-      background: #fafafa;
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    input[type="text"]:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #F0708F;
-      box-shadow: 0 0 0 3px rgba(240,112,143,0.15);
-    }
-
-    select {
-      background: #fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;
-      padding-right: 32px;
-    }
-
-    /* チェックボックスグループ */
-    .checkbox-group {
-      margin-bottom: 16px;
-    }
-
-    .checkbox-group label {
-      display: flex;
-      align-items: center;
-      font-weight: 400;
-      font-size: 0.9rem;
-      padding: 6px 0;
-      cursor: pointer;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-right: 10px;
-      accent-color: #F0708F;
-      flex-shrink: 0;
-    }
-
-    .checkbox-other-text {
-      width: calc(100% - 28px);
-      margin-left: 28px;
-      margin-top: -4px;
-      margin-bottom: 8px;
-      padding: 6px 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      display: none;
-    }
-
-    .checkbox-other-text.active {
-      display: block;
-    }
-
-    /* 録音セクション */
-    .recorder-section {
-      text-align: center;
-    }
-
-    .recorder-section h2 {
-      font-size: 1rem;
-      margin-bottom: 16px;
-      color: #444;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-record {
-      background: #F0708F;
-      color: #fff;
-      font-size: 1.1rem;
-      padding: 14px 36px;
-    }
-
-    .btn-record:hover:not(:disabled) { background: #DB5A7B; }
-
-    .btn-stop {
-      background: #555;
-      color: #fff;
-      font-size: 1.1rem;
-      padding: 14px 36px;
-    }
-
-    .btn-stop:hover:not(:disabled) { background: #333; }
-
-    .btn-retry {
-      background: #eee;
-      color: #333;
-    }
-
-    .btn-retry:hover { background: #ddd; }
-
-    .btn-submit {
-      background: #F0708F;
-      color: #fff;
-      width: 100%;
-      font-size: 1.1rem;
-      padding: 14px;
-    }
-
-    .btn-submit:hover:not(:disabled) { background: #DB5A7B; }
-
-    .timer {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #e53935;
-      margin: 16px 0;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .recording-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #e53935;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .recording-dot {
-      width: 12px;
-      height: 12px;
-      background: #e53935;
-      border-radius: 50%;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    audio {
-      width: 100%;
-      margin: 12px 0;
-    }
-
-    .confirm-buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .confirm-buttons .btn { flex: 1; }
-
-    /* 状態表示 */
-    .state { display: none; }
-    .state.active { display: block; }
-
-    /* 送信中スピナー */
-    .spinner-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.85);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .spinner-overlay.active {
-      display: flex;
-    }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid #ddd;
-      border-top-color: #F0708F;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .spinner-text {
-      font-size: 1.1rem;
-      color: #555;
-      font-weight: 600;
-    }
-
-    /* 完了メッセージ */
-    .success-message {
-      display: none;
-      text-align: center;
-      padding: 48px 24px;
-    }
-
-    .success-message.active { display: block; }
-
-    .success-icon {
-      font-size: 3rem;
-      margin-bottom: 16px;
-    }
-
-    .success-message h2 {
-      color: #43a047;
-      margin-bottom: 8px;
-    }
-
-    .success-message p {
-      color: #666;
-      line-height: 1.8;
-    }
-
-    /* エラーメッセージ */
-    .error-msg {
-      background: #ffebee;
-      color: #c62828;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin-bottom: 16px;
-      display: none;
-    }
-
-    .error-msg.active { display: block; }
-
-    /* 項目ごとのエラー（入力欄の真下に赤字で理由を出す） */
-    .field-error {
-      display: none;
-      color: #d32f2f;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin: -10px 0 14px;
-    }
-    .field-error.active { display: block; }
-    input.invalid, select.invalid {
-      border-color: #d32f2f;
-      background: #fff5f5;
-    }
-
-    .note {
-      font-size: 0.8rem;
-      color: #888;
-      margin-top: -8px;
-      margin-bottom: 16px;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 16px 0;
-      color: #999;
-      font-size: 0.85rem;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      border-top: 1px solid #ddd;
-    }
-
-    .upload-area {
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #888;
-    }
-
-    .upload-area:hover {
-      border-color: #5c6bc0;
-      color: #5c6bc0;
-      background: #f8f8ff;
-    }
-
-    .upload-area input[type="file"] {
-      display: none;
-    }
-
-    .upload-filename {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: #43a047;
-      font-weight: 600;
-    }
-
-    /* 同意チェック */
-    .consent-section {
-      font-size: 0.85rem;
-      color: #555;
-      line-height: 1.8;
-    }
-
-    .consent-section details {
-      margin-bottom: 12px;
-    }
-
-    .consent-section summary {
-      cursor: pointer;
-      color: #5c6bc0;
-      font-weight: 600;
-    }
-
-    .consent-section details .consent-body {
-      margin-top: 8px;
-      padding: 12px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      font-size: 0.8rem;
-    }
-
-    .consent-check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .consent-check input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: #F0708F;
-      flex-shrink: 0;
-    }
-
-    /* ===== record-first ヒーロー（2026-08-08・参考: こえはかる系の即ボタンUX） ===== */
-    .hero {
-      text-align: center;
-      padding: 40px 8px 24px;
-    }
-    .hero-title {
-      font-size: 1.9rem;
-      line-height: 1.4;
-      color: #24358F;
-      margin-bottom: 12px;
-    }
-    .hero-sub {
-      font-size: 0.95rem;
-      color: #555;
-      line-height: 1.9;
-      margin-bottom: 32px;
-    }
+    body { font-family: var(--body); color: var(--ink); background: var(--paper); line-height: 1.8; -webkit-text-size-adjust: 100%; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
+    a { color: var(--ink); text-underline-offset: 5px; text-decoration-thickness: 1px; }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 5px; }
+    .container { width: 100%; max-width: 520px; margin: 0 auto; padding: 30px 24px 38px; }
+    h1 { font-family: var(--display); font-weight: 800; font-size: 1.8rem; line-height: 1.55; letter-spacing: .015em; }
+
+    /* The microphone in the drawing meets the recording circle. */
+    .hero { padding: 0; }
+    .hero-title { position: relative; width: fit-content; font-size: clamp(2.05rem, 9.3vw, 2.7rem); line-height: 1.38; letter-spacing: .02em; }
+    .hero-title::after { content: ''; position: absolute; z-index: -1; left: 0; right: 2px; bottom: -5px; height: 15px; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20220%2020%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M5%2010%20Q55%205%20109%209%20T214%205%22%20fill%3D%22none%22%20stroke%3D%22%23FBA48C%22%20stroke-width%3D%229%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3%2012%20Q52%2010%20107%2012%20T215%209%22%20fill%3D%22none%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") no-repeat center / 100% 100%; }
+    .hero-title { isolation: isolate; }
+    .hero-sub { font-size: .85rem; line-height: 1.95; margin-top: 23px; }
+    .voice-stage { position: relative; margin-top: 24px; }
+    .voice-portrait { position: absolute; z-index: 2; width: 270px; height: 270px; left: -48px; top: 150px; background: url('chars/neko-big.png') center / contain no-repeat; mix-blend-mode: multiply; pointer-events: none; }
+    .hero-topic { width: fit-content; font-size: .9rem; line-height: 1.9; padding: 0 0 10px; margin: 0 0 12px; background: var(--sketch-line) left bottom / 97% 6px no-repeat; }
     .hero-mic {
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(145deg, #FBA48C, #F0708F);
-      color: #fff;
-      box-shadow: 0 10px 30px rgba(240,112,143,0.35), 0 2px 8px rgba(0,0,0,0.12);
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      -webkit-tap-highlight-color: transparent;
+      position: relative; isolation: isolate;
+      width: var(--record-size); height: var(--record-size);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      margin: 0 0 0 auto; padding: 18px;
+      border: 0; border-radius: 0; background: transparent; color: var(--ink);
+      cursor: pointer; touch-action: manipulation;
     }
-    .hero-mic:active {
-      transform: scale(0.96);
-      box-shadow: 0 4px 14px rgba(240,112,143,0.3);
-    }
-    .hero-mic-icon { font-size: 2.2rem; }
-    .hero-mic-svg { width: 52px; height: 52px; }
-    .hero-topic {
-      font-size: 0.95rem;
-      color: #24358F;
-      line-height: 1.8;
-      margin-bottom: 20px;
-    }
-    /* 3・2・1 */
-    .hero-count {
-      cursor: default;
-      background: #fff;
-      color: #F0708F;
-      border: 4px solid #F0708F;
-      box-shadow: 0 10px 30px rgba(240,112,143,0.2);
-    }
-    .hero-count span {
-      font-size: 4.5rem;
-      font-weight: 700;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-      animation: countPop 1s ease-out infinite;
-    }
-    @keyframes countPop {
-      0% { transform: scale(1.25); opacity: 0.4; }
-      30% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    /* 録音中 */
-    .rec-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #e53935;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    .rec-time { font-variant-numeric: tabular-nums; font-size: 1.15rem; }
-    .rec-max { color: #999; font-weight: 400; font-size: 0.85rem; }
-    .rec-wrap {
-      position: relative;
-      width: 190px;
-      height: 190px;
-      margin: 0 auto;
-    }
-    .rec-level {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: rgba(240,112,143,0.28);
-      transform: scale(1);
-      transition: transform 0.08s linear;
-    }
+    .hero-mic::before { content: ''; position: absolute; z-index: -1; inset: 0; background: var(--sketch-circle) center / 100% 100% no-repeat; transition: transform .18s ease; }
+    .hero-mic:hover::before { transform: rotate(-4deg) scale(1.025); }
+    .hero-mic:active::before { transform: rotate(2deg) scale(.97); }
+    .hero-mic:focus-visible { outline-offset: 0; border-radius: 50%; }
+    .hero-mic-svg { width: 40px; height: 40px; }
+    .hero-mic-svg rect { fill: var(--paper); stroke: var(--ink); stroke-width: 1.6; }
+    .hero-mic-svg path { stroke: var(--ink); stroke-width: 1.6; }
+    .hero-mic-icon { font-size: 2rem; }
+    .hero-mic-label { font-family: var(--display); font-size: 1.18rem; font-weight: 800; letter-spacing: .06em; line-height: 1.5; }
+    .hero-hint { position: relative; margin-top: 175px; font-size: .76rem; line-height: 1.9; text-align: left; }
+    .hero-hint-sub { display: block; font-size: .72rem; margin-top: 3px; }
+    .hero-upload { margin-top: 23px; padding-top: 15px; background: var(--sketch-line) left top / 100% 7px no-repeat; font-size: .78rem; }
+    .hero-upload a { display: inline-flex; align-items: center; min-height: 42px; }
+    .hero-note { font-size: .7rem; line-height: 1.9; margin-top: 10px; }
+    .upload-filename { font-size: .8rem; font-weight: 600; overflow-wrap: anywhere; }
+    .upload-filename:not(:empty) { margin-top: 8px; }
+    .voice-lineup { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: end; gap: 2px; width: 84%; max-width: 330px; margin: 24px 0 0 auto; }
+    .voice-lineup img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+
+    /* Keep all three states on the same circle; the meter owns its transform. */
+    #stateReady .hero-topic { min-height: 60px; display: flex; align-items: center; }
+    .hero-count { --sketch-circle: var(--count-circle); cursor: default; color: var(--ink); }
+    .hero-count:hover::before, .hero-count:active::before { transform: none; }
+    .hero-count span { font-family: 'Avenir Next', 'Trebuchet MS', sans-serif; font-size: 4.8rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; animation: countPop 1s ease-out infinite; }
+    @keyframes countPop { 0% { transform: scale(1.12); opacity: .4; } 30%, 100% { transform: scale(1); opacity: 1; } }
+    .rec-live { display: flex; align-items: center; gap: 8px; min-height: 60px; padding-bottom: 10px; margin: 0 0 12px; font-size: .9rem; font-weight: 700; }
+    .rec-time { font-family: 'Avenir Next', sans-serif; font-variant-numeric: tabular-nums; font-size: 1.25rem; margin-left: 4px; }
+    .rec-max { font-size: .8rem; font-weight: 400; }
+    .recording-dot { width: 8px; height: 8px; background: var(--coral); border-radius: 50%; animation: blink 1s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+    .rec-wrap { position: relative; width: var(--record-size); height: var(--record-size); margin-left: auto; }
+    .rec-level { position: absolute; inset: -2px; background: var(--level-circle) center / 100% 100% no-repeat; transform: scale(1); transform-origin: 50% 50%; transition: transform .08s linear; pointer-events: none; }
     .rec-level.no-meter { animation: recPulse 1.6s ease-in-out infinite; }
-    @keyframes recPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); }
+    @keyframes recPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .rec-stop { --sketch-circle: var(--stop-circle); color: var(--paper); }
+    .stop-icon { width: 26px; height: 27px; margin: 5px 0 10px; background: var(--paper); clip-path: polygon(2% 3%, 98% 0, 100% 96%, 0 100%); }
+    #stateReady .hero-hint a { display: inline-block; min-height: 44px; padding: 8px 0; color: var(--ink) !important; }
+    .voice-stage:has(#stateConfirm.active) .voice-portrait { width: 160px; height: 160px; top: -13px; left: auto; right: -12px; }
+    #stateConfirm { padding-top: 150px; }
+    #stateConfirm > p { font-size: .875rem; }
+    .timer { font-size: 2rem; font-weight: 700; color: var(--ink); margin: 16px 0; font-variant-numeric: tabular-nums; }
+    .recording-indicator { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; }
+
+    /* Forms feel like the same illustrated sheet, with quiet ruled fields. */
+    .step-label { width: fit-content; font-size: .75rem; font-weight: 600; letter-spacing: .08em; margin: 0 0 12px; padding-bottom: 8px; background: var(--sketch-line) left bottom / 100% 6px no-repeat; }
+    #formContainer > h1, #surveyContainer > h1 { position: relative; padding-right: 80px; margin-bottom: 24px; }
+    #formContainer > h1::after, #surveyContainer > h1::after { content: ''; position: absolute; width: 82px; height: 82px; right: -5px; bottom: -8px; background: url('chars/neko-big.png') center / contain no-repeat; mix-blend-mode: multiply; }
+    .card { position: relative; padding: 26px 0; margin: 0; background: var(--sketch-line) left top / 100% 7px no-repeat; }
+    .card:nth-of-type(even) { background-size: 100% 6px; }
+    .intro { font-size: .9rem; line-height: 1.9; }
+    .intro h3 { font-size: .95rem; margin: 12px 0 4px; }
+    label { display: block; font-size: .875rem; font-weight: 650; line-height: 1.85; margin-bottom: 8px; }
+    label .required { font-size: .72rem; font-weight: 500; white-space: nowrap; margin-left: 4px; text-decoration: underline; text-decoration-color: var(--coral); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+    input[type='text'], select, textarea { width: 100%; min-width: 0; min-height: 52px; padding: 12px 10px 15px; border: 0; border-radius: 0; margin-bottom: 25px; font-size: 1rem; appearance: none; -webkit-appearance: none; line-height: 1.5; background: var(--sketch-line) left bottom / 100% 7px no-repeat, var(--white); }
+    input::placeholder, textarea::placeholder { color: var(--ink); opacity: .64; }
+    input[type='text']:focus, select:focus, textarea:focus { outline: 2px solid var(--ink); outline-offset: 3px; }
+    select { padding-right: 36px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3Cpath d='M2 2l5 6 7-7' stroke='%2324358F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E"), var(--sketch-line); background-position: right 14px center, left bottom; background-size: 14px 10px, 100% 7px; background-repeat: no-repeat; background-color: var(--white); }
+    textarea { min-height: 128px; resize: vertical; }
+    .card > input:last-child, .card > select:last-child, .card > textarea:last-child { margin-bottom: 0; }
+    .note { font-size: .75rem; line-height: 1.9; margin: -8px 0 16px; }
+    .recorder-section { text-align: left; padding: 22px 0 25px; }
+    .recorder-section h2 { font-size: 1rem; margin-bottom: 16px; }
+    #stateAccepted > p { color: var(--ink) !important; font-size: .875rem; }
+    #stateAccepted .btn-retry { min-height: 44px; font-size: .8rem; padding: 6px 2px; }
+    audio { display: block; width: 100%; height: 42px; margin: 15px 0 5px; }
+    .btn { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 24px; border: 0; border-radius: 0; font-size: .95rem; font-weight: 650; line-height: 1.6; cursor: pointer; touch-action: manipulation; background: transparent; transition: transform .15s; }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-record, .btn-submit { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%2064%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M5%208%20Q100%203%20204%206%20T395%205%20L394%2031%20L396%2057%20Q304%2054%20202%2058%20T4%2056%20L6%2032%20Z%22%20fill%3D%22%23FBA48C%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 100% 100% no-repeat; color: var(--ink); }
+    .btn-record:hover:not(:disabled), .btn-submit:hover:not(:disabled) { transform: rotate(-.6deg); }
+    .btn-stop { background: var(--ink); color: var(--white); }
+    .btn-retry { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+    .btn-retry:hover { text-decoration-thickness: 2px; }
+    .btn-submit { width: 100%; min-height: 62px; font-size: 1rem; letter-spacing: .06em; }
+    .confirm-buttons { display: flex; gap: 18px; margin-top: 22px; }
+    .confirm-buttons .btn { flex: 1; }
+    .checkbox-group { margin: 14px 0 0; }
+    .checkbox-group label { display: flex; align-items: center; font-weight: 400; font-size: .875rem; padding: 10px 0; min-height: 46px; margin: 0; cursor: pointer; }
+    .checkbox-group input[type='checkbox'], .consent-check input[type='checkbox'] { appearance: none; -webkit-appearance: none; width: 23px; height: 23px; border: 0; border-radius: 0; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%203%20L12%202%20L22%203%20L21%2013%20L22%2022%20L12%2021%20L2%2022%20L3%2012%20Z%22%20fill%3D%22%23FFFFFF%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat; margin-right: 10px; flex-shrink: 0; cursor: pointer; }
+    .checkbox-group input[type='checkbox']:checked, .consent-check input[type='checkbox']:checked { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%203%20L12%202%20L22%203%20L21%2013%20L22%2022%20L12%2021%20L2%2022%20L3%2012%20Z%22%20fill%3D%22%2324358F%22%20stroke%3D%22%2324358F%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M6%2012%20L10%2017%20L18%207%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"); }
+    .src-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
+    .src-grid label { min-width: 0; background: var(--soft-line) left bottom / 100% 5px no-repeat; }
+    .src-grid .checkbox-other-text { grid-column: 1 / -1; }
+    input.checkbox-other-text { display: none; width: calc(100% - 33px); margin: 10px 0 12px 33px; min-height: 44px; font-size: .9rem; }
+    .checkbox-other-text.active { display: block; }
+    .consent-section { font-size: .8rem; line-height: 1.85; }
+    .consent-section details { margin-bottom: 18px; }
+    .consent-section summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+    .consent-body { margin-top: 12px; padding: 14px 0 14px 12px; font-size: .75rem; border-left: 2px solid var(--salmon); }
+    .consent-body ul { padding-left: 1.3em; }
+    .consent-body li + li { margin-top: 6px; }
+    .consent-check { display: flex; align-items: center; min-height: 44px; font-weight: 600; margin: 0; cursor: pointer; }
+    #surveyContainer > p[style] { color: var(--ink) !important; text-align: left !important; font-size: .75rem !important; }
+
+    .state, #heroScreen .state { display: none; }
+    .state.active, #heroScreen .state.active { display: block; }
+    .error-msg { display: none; background: var(--peach); color: var(--ink); padding: 13px 14px; font-size: .85rem; margin-bottom: 24px; }
+    .error-msg.active { display: block; }
+    .field-error { display: none; color: var(--ink); font-size: .8rem; font-weight: 600; margin: -14px 0 22px; padding-left: 10px; border-left: 3px solid var(--coral); }
+    .field-error.active { display: block; }
+    input.invalid, select.invalid { outline: 2px solid var(--coral); outline-offset: 2px; background-color: var(--paper); }
+    .spinner-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: var(--paper); align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+    .spinner-overlay.active { display: flex; }
+    .spinner { width: 48px; height: 48px; background: var(--count-circle) center / contain no-repeat; animation: spin 1.4s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner-text { font-size: 1rem; font-weight: 600; }
+    .success-message { display: none; padding-top: 60px; text-align: left; }
+    .success-message.active { display: block; }
+    .success-icon { display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; background: var(--sketch-circle) center / contain no-repeat; color: var(--ink); font-size: 2rem; line-height: 1.2; margin-bottom: 22px; }
+    .success-message h2 { font-family: var(--display); font-size: 1.35rem; margin-bottom: 9px; }
+    .success-message p { line-height: 1.9; color: var(--ink) !important; }
+    .success-message .card { margin-top: 24px !important; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; font-size: .85rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 6px; background: var(--sketch-line) center / 100% 100% no-repeat; }
+    .upload-area { padding: 20px 0; cursor: pointer; background: var(--sketch-line) left bottom / 100% 6px no-repeat; }
+    .upload-area:hover { background-color: var(--peach); }
+    .upload-area input[type='file'] { display: none; }
+
+    @media (min-width: 480px) {
+      :root { --record-size: 190px; }
+      .container { padding: 40px 36px 48px; }
+      .voice-stage { margin-top: 26px; }
+      .voice-portrait { width: 320px; height: 320px; left: -44px; top: 150px; }
+      .hero-topic { margin-bottom: 20px; }
+      #stateReady .hero-topic, .rec-live { min-height: 60px; margin-bottom: 20px; }
+      .hero-hint { margin-top: 210px; font-size: .8rem; }
+      .hero-hint-sub { font-size: .75rem; }
+      .hero-note { font-size: .75rem; }
+      .src-grid { grid-template-columns: 1fr 1fr; column-gap: 18px; }
+      .src-grid label { font-size: .8rem; }
     }
-    .rec-stop {
-      position: relative;
-      background: #24358F;   /* 押す前（ピンク）と色を変えて「いま録っている」を見分けやすく */
-      box-shadow: 0 10px 30px rgba(36,53,143,0.3), 0 2px 8px rgba(0,0,0,0.12);
-    }
-    .stop-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 6px;
-      background: #fff;
+    @media (max-width: 359px) {
+      :root { --record-size: 174px; }
+      .container { padding: 24px 18px 32px; }
+      .hero-sub { font-size: .75rem; }
+      .hero-topic { font-size: .76rem; padding-bottom: 10px; min-height: 58px; }
+      .voice-portrait { width: 275px; height: 275px; left: -50px; top: 104px; }
+      .hero-hint { margin-top: 126px; font-size: .72rem; }
+      .hero-hint-sub { font-size: .69rem; }
+      .hero-upload { font-size: .72rem; }
+      .hero-note { font-size: .62rem; }
+      .hero-mic-label { font-size: 1.1rem; }
+      #formContainer > h1, #surveyContainer > h1 { font-size: 1.6rem; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .hero-count span, .rec-level.no-meter { animation: none; }
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
-    .hero-mic-label {
-      font-size: 1.25rem;
-      font-weight: 700;
-      line-height: 1.35;
-      letter-spacing: 0.05em;
-    }
-    .hero-hint {
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #555;
-      line-height: 1.9;
-    }
-    .hero-hint-sub { font-size: 0.8rem; color: #999; display: block; margin-top: 2px; }
-    .hero-upload {
-      margin-top: 26px;
-      font-size: 0.85rem;
-    }
-    .hero-upload a {
-      color: #F0708F;
-      text-decoration: underline;
-    }
-    .hero-note {
-      margin-top: 26px;
-      font-size: 0.75rem;
-      color: #aaa;
-      line-height: 1.8;
-    }
-    .step-label {
-      text-align: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #F0708F;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-    .src-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0 10px;
-    }
-    .src-grid .checkbox-other-text { grid-column: 1 / -1; }
-    #heroScreen .state { display: none; }
-    #heroScreen .state.active { display: block; }
   </style>
 </head>
 <body>
@@ -587,6 +214,9 @@
   <div class="hero">
     <h1 class="hero-title">あなたの声、<br>なにタイプ？</h1>
     <p class="hero-sub">プロの耳が20年の経験できいて、<br>あなたの声の魅力とタイプをみつけます。</p>
+
+    <div class="voice-stage">
+      <div class="voice-portrait" aria-hidden="true"></div>
 
     <!-- 初期状態: 丸ボタン1つ＝録音ボタン（2026-10-18 みかさん「丸のマイクで録音開始だと思う方が多い」→ 丸は1つだけにし、3・2・1のあと録音） -->
     <div id="stateIdle" class="state active">
@@ -635,6 +265,17 @@
         <button class="btn btn-record" onclick="acceptAudio()" style="font-size:0.95rem; padding:12px 20px;">OK</button>
       </div>
     </div>
+    </div>
+    <div class="voice-lineup" aria-hidden="true">
+      <img src="chars/neko.png" alt="" width="240" height="240">
+      <img src="chars/inu.png" alt="" width="240" height="240">
+      <img src="chars/hitsuji.png" alt="" width="240" height="240">
+      <img src="chars/inko.png" alt="" width="240" height="240">
+      <img src="chars/kuma.png" alt="" width="240" height="240">
+      <img src="chars/kujira.png" alt="" width="240" height="240">
+      <img src="chars/kujaku.png" alt="" width="240" height="240">
+    </div>
+
   </div>
 </div>
 
