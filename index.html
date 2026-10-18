@@ -462,6 +462,77 @@
       box-shadow: 0 4px 14px rgba(240,112,143,0.3);
     }
     .hero-mic-icon { font-size: 2.2rem; }
+    .hero-mic-svg { width: 52px; height: 52px; }
+    .hero-topic {
+      font-size: 0.95rem;
+      color: #24358F;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    /* 3・2・1 */
+    .hero-count {
+      cursor: default;
+      background: #fff;
+      color: #F0708F;
+      border: 4px solid #F0708F;
+      box-shadow: 0 10px 30px rgba(240,112,143,0.2);
+    }
+    .hero-count span {
+      font-size: 4.5rem;
+      font-weight: 700;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      animation: countPop 1s ease-out infinite;
+    }
+    @keyframes countPop {
+      0% { transform: scale(1.25); opacity: 0.4; }
+      30% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    /* 録音中 */
+    .rec-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #e53935;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .rec-time { font-variant-numeric: tabular-nums; font-size: 1.15rem; }
+    .rec-max { color: #999; font-weight: 400; font-size: 0.85rem; }
+    .rec-wrap {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto;
+    }
+    .rec-level {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(240,112,143,0.28);
+      transform: scale(1);
+      transition: transform 0.08s linear;
+    }
+    .rec-level.no-meter { animation: recPulse 1.6s ease-in-out infinite; }
+    @keyframes recPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    .rec-stop {
+      position: relative;
+      background: #24358F;   /* 押す前（ピンク）と色を変えて「いま録っている」を見分けやすく */
+      box-shadow: 0 10px 30px rgba(36,53,143,0.3), 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .stop-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: #fff;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-count span, .rec-level.no-meter { animation: none; }
+    }
     .hero-mic-label {
       font-size: 1.25rem;
       font-weight: 700;
@@ -517,14 +588,14 @@
     <h1 class="hero-title">あなたの声、<br>なにタイプ？</h1>
     <p class="hero-sub">プロの耳が20年の経験できいて、<br>あなたの声の魅力とタイプをみつけます。</p>
 
-    <!-- 初期状態: 大きなボタン1つ -->
+    <!-- 初期状態: 丸ボタン1つ＝録音ボタン（2026-10-18 みかさん「丸のマイクで録音開始だと思う方が多い」→ 丸は1つだけにし、3・2・1のあと録音） -->
     <div id="stateIdle" class="state active">
-      <button class="hero-mic" onclick="startRecording()">
-        <span class="hero-mic-icon">🎙</span>
-        <span class="hero-mic-label" style="white-space:nowrap;">診断スタート</span>
+      <p class="hero-topic">話すことは、なんでも大丈夫。<br>自己紹介や、今日の夕飯の話など。</p>
+      <button class="hero-mic" onclick="startRecording()" aria-label="録音する">
+        <svg class="hero-mic-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="hero-mic-label" style="white-space:nowrap;">録音する</span>
       </button>
-      <p class="hero-hint">押してもすぐには録音されません。<br>
-      次の「録音開始」から、はじまります。</p>
+      <p class="hero-hint">押すと「3・2・1」のあと、録音がはじまります。<span class="hero-hint-sub">最大3分・好きなときに止められます</span></p>
 
       <div class="hero-upload">
         <a href="#" onclick="document.getElementById('fileInput').click(); return false;">ボイスメモなど、手もとのファイルを使う</a>
@@ -535,25 +606,24 @@
       <p class="hero-note">まわりの音が大きいと、きき取りの精度が下がります。<br>歌は数値が出しにくいため、話し声でお願いします。</p>
     </div>
 
-    <!-- マイクの準備ができた（録音はまだ） 2026-10-10 みかさん「録音開始ボタン欲しい」 -->
+    <!-- マイクの準備ができた → 3・2・1（10/10の「心の準備の間」をタップでなく数字で残す） -->
     <div id="stateReady" class="state">
-      <p class="hero-hint" style="margin-top:0;">準備ができたら、押して話しはじめてください。<br>
-      自己紹介でも、今日の夕飯の話でも。<span class="hero-hint-sub">（最大3分・途中で止められます）</span></p>
-      <button class="hero-mic" onclick="beginRecording()">
-        <span class="hero-mic-icon">🔴</span>
-        <span class="hero-mic-label" style="white-space:nowrap;">録音開始</span>
-      </button>
-      <p style="margin-top:14px;"><a href="#" onclick="cancelReady(); return false;" style="color:#888; font-size:0.9rem;">もどる</a></p>
+      <p class="hero-topic">話す準備をしてください</p>
+      <div class="hero-mic hero-count" aria-live="assertive"><span id="countNum">3</span></div>
+      <p class="hero-hint"><a href="#" onclick="cancelReady(); return false;" style="color:#888;">やめる</a></p>
     </div>
 
-    <!-- きいている（録音中） -->
+    <!-- きいている（録音中）: 同じ丸が声に合わせて揺れ、まん中が「止める」 -->
     <div id="stateRecording" class="state">
-      <div class="recording-indicator">
-        <div class="recording-dot"></div>
-        マイクに向かって話してください
+      <p class="rec-live"><span class="recording-dot"></span>録音中 <span id="timer" class="rec-time">0:00</span><span class="rec-max"> / 3:00</span></p>
+      <div class="rec-wrap">
+        <div class="rec-level" id="recLevel"></div>
+        <button class="hero-mic rec-stop" onclick="stopRecording()" aria-label="止める">
+          <span class="stop-icon"></span>
+          <span class="hero-mic-label">止める</span>
+        </button>
       </div>
-      <div class="timer" id="timer">3:00</div>
-      <button class="btn btn-stop" onclick="stopRecording()">終了</button>
+      <p class="hero-hint">話し終わったら「止める」を押してください。</p>
     </div>
 
     <!-- 確認 -->
@@ -895,6 +965,8 @@
   // ============================================================
   function startRecording() {
     document.getElementById('errorMsg').classList.remove('active');
+    // 声の揺れ（レベル表示）用。iOS Safari ではタップの中で作る必要がある。作れなくても録音はできる
+    try { meterCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { meterCtx = null; }
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       showError('このブラウザではマイクが使えないようです。「ボイスメモなど、手もとのファイルを使う」からお願いします。');
@@ -931,45 +1003,100 @@
           document.getElementById('audioPlayer').src = url;
           document.getElementById('audioPlayerAccepted').src = url;
           clearInterval(timerInterval);
+          stopMeter();
           setState('stateConfirm');
         };
 
         readyStream = stream;
-        setState('stateReady');
+        startCountdown();
       })
       .catch(function(err) {
         console.error(err);
+        stopMeter();
         showError('マイクが許可されませんでした。ブラウザの設定でマイクを許可するか、「ボイスメモなど、手もとのファイルを使う」からお願いします。');
       });
   }
 
-  // 「録音開始」を押してから録り始める（マイクの許可だけ先に取っておく）
+  // マイクの許可が取れたら 3・2・1 → そのまま録音（2026-10-18: 丸ボタンを1つに。押すのは「録音する」「止める」「OK」だけ）
   var readyStream = null;
+  var countTimer = null;
+  function startCountdown() {
+    var n = 3;
+    document.getElementById('countNum').textContent = n;
+    setState('stateReady');
+    clearInterval(countTimer);
+    countTimer = setInterval(function() {
+      n--;
+      if (n <= 0) { clearInterval(countTimer); countTimer = null; beginRecording(); return; }
+      document.getElementById('countNum').textContent = n;
+    }, 1000);
+  }
+
+  var MAX_SECONDS = 180;
+  var elapsedSeconds = 0;
   function beginRecording() {
     if (!mediaRecorder || mediaRecorder.state !== 'inactive') return;
     audioChunks = [];
     mediaRecorder.start(1000);
-    remainingSeconds = 180;
+    elapsedSeconds = 0;
     updateTimerDisplay();
     timerInterval = setInterval(function() {
-      remainingSeconds--;
+      elapsedSeconds++;
       updateTimerDisplay();
-      if (remainingSeconds <= 0) stopRecording();
+      if (elapsedSeconds >= MAX_SECONDS) stopRecording();
     }, 1000);
     setState('stateRecording');
+    startMeter(readyStream);
   }
 
   function cancelReady() {
+    clearInterval(countTimer); countTimer = null;
     if (readyStream) readyStream.getTracks().forEach(function(t) { t.stop(); });
     readyStream = null;
     mediaRecorder = null;
+    stopMeter();
     setState('stateIdle');
   }
 
   function updateTimerDisplay() {
-    var min = Math.floor(remainingSeconds / 60);
-    var sec = remainingSeconds % 60;
+    var min = Math.floor(elapsedSeconds / 60);
+    var sec = elapsedSeconds % 60;
     document.getElementById('timer').textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  // --- 声に合わせて丸が揺れる（録れているのが目で分かる）。音は外に出さない ---
+  var meterCtx = null, meterRaf = null;
+  function startMeter(stream) {
+    var el = document.getElementById('recLevel');
+    el.style.transform = 'scale(1)';
+    el.classList.remove('no-meter');
+    try {
+      if (!meterCtx || !stream) throw new Error('no ctx');
+      if (meterCtx.state === 'suspended') meterCtx.resume();
+      var src = meterCtx.createMediaStreamSource(stream);
+      var an = meterCtx.createAnalyser();
+      an.fftSize = 512;
+      src.connect(an);
+      var buf = new Uint8Array(an.fftSize);
+      var level = 0;
+      (function tick() {
+        an.getByteTimeDomainData(buf);
+        var sum = 0;
+        for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; }
+        var rms = Math.sqrt(sum / buf.length);
+        level = level * 0.7 + Math.min(1, rms * 4) * 0.3;
+        el.style.transform = 'scale(' + (1 + level * 0.35).toFixed(3) + ')';
+        meterRaf = requestAnimationFrame(tick);
+      })();
+    } catch (e) {
+      el.classList.add('no-meter');   // 揺れが取れないブラウザでは、ゆっくり脈打つだけ
+    }
+  }
+  function stopMeter() {
+    if (meterRaf) cancelAnimationFrame(meterRaf);
+    meterRaf = null;
+    if (meterCtx) { try { meterCtx.close(); } catch (e) {} }
+    meterCtx = null;
   }
 
   function stopRecording() {
